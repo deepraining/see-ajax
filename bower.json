@@ -1,0 +1,25 @@
+{
+  "name": "jquery.seeAjax",
+  "version": "0.0.1",
+  "description": "A wrapped extended jquery ajax handling, with custom keys, pre handle, post handle",
+  "keywords": [
+    "jquery",
+    "ajax"
+  ],
+  "homepage": "https://github.com/senntyou",
+  "license": "MIT",
+  "moduleType": "globals",
+  "main": [
+    "jquery.seeAjax.js"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "1.9.1 - 3"
+  }
+}
