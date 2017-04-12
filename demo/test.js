@@ -106,7 +106,7 @@ $.seeAjax.get('test', {key1: 'haha'}, function (res) {
     $.seeAjax.config({
         environment: 1
     });
-    $.seeAjax.get('test', {key1: 'haha'}, function (res) {
+    $.seeAjax.post('test', {key1: 'haha'}, function (res) {
         console.log('env: 1');
         console.log(res);
 
@@ -212,14 +212,14 @@ function makeTest2() {
         }
     });
 
-    $.seeAjax.get('test2', {key1: 'haha'}, function (res) {
+    $.seeAjax.put('test2', {key1: 'haha'}, function (res) {
         console.log('env: 0');
         console.log(res);
 
         $.seeAjax.config({
             environment: 1
         });
-        $.seeAjax.get('test2', {key1: 'haha'}, function (res) {
+        $.seeAjax.delete('test2', {key1: 'haha'}, function (res) {
             console.log('env: 1');
             console.log(res);
         });

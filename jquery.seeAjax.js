@@ -536,11 +536,22 @@ if (typeof jQuery === 'undefined') {
         //前置处理
         request.preHandle(formatData[1], url);
         //请求
-        $[method](formatData[0], !stringify ? formatData[1] : JSON.stringify(formatData[1]), function (res) {
-            //后置处理
-            request.postHandle(res, url);
-            callback(res);
-        }, type)
+        //$[method](formatData[0], !stringify ? formatData[1] : JSON.stringify(formatData[1]), function (res) {
+        //    //后置处理
+        //    request.postHandle(res, url);
+        //    callback(res);
+        //}, type);
+
+        $.ajax(formatData[0], {
+            type: method,
+            data: !stringify ? formatData[1] : JSON.stringify(formatData[1]),
+            dataType: type,
+            success: function (res) {
+                //后置处理
+                request.postHandle(res, url);
+                callback(res);
+            }
+        });
     };
     /**
      * 发起get请求
@@ -553,6 +564,22 @@ if (typeof jQuery === 'undefined') {
         request.send("get", url, data, callback, type, !1);
     };
     /**
+     * get 方法之外的其他请求
+     * @param method
+     * @param url
+     * @param data
+     * @param callback
+     * @param type
+     * @param stringify
+     */
+    request.beyondGet = function (method, url, data, callback, type, stringify) {
+        arguments.length == 5 && typeof type == 'boolean' && (
+            stringify = type,
+                type = 'json'
+        );
+        request.send(method, url, data, callback, type, stringify);
+    };
+    /**
      * 发起post请求
      * @param url
      * @param data
@@ -561,11 +588,29 @@ if (typeof jQuery === 'undefined') {
      * @param stringify
      */
     request.post = function (url, data, callback, type, stringify) {
-        arguments.length == 4 && typeof type == 'boolean' && (
-            stringify = type,
-                type = 'json'
-        );
-            request.send("post", url, data, callback, type, stringify);
+        request.beyondGet('post', url, data, callback, type, stringify);
+    };
+    /**
+     * 发起put请求
+     * @param url
+     * @param data
+     * @param callback
+     * @param type
+     * @param stringify
+     */
+    request.put = function (url, data, callback, type, stringify) {
+        request.beyondGet('put', url, data, callback, type, stringify);
+    };
+    /**
+     * 发起delete请求
+     * @param url
+     * @param data
+     * @param callback
+     * @param type
+     * @param stringify
+     */
+    request.delete = function (url, data, callback, type, stringify) {
+        request.beyondGet('delete', url, data, callback, type, stringify);
     };
 
     /**
