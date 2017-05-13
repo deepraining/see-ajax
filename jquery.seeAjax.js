@@ -413,7 +413,7 @@ if (typeof jQuery === 'undefined') {
             index = config.environment,
             newData = {};
         typeof index == 'undefined' && (
-            console.error("环境变量 config.environment 没有配置, 默认取值为0的环境"),
+            console.log("环境变量 config.environment 没有配置, 默认取值为0的环境"),
             index = 0
         );
         !name && (
@@ -445,7 +445,7 @@ if (typeof jQuery === 'undefined') {
             commonHandle = !!config.preHandle && !!config.preHandle.common && config.preHandle.common,
             nameHandle = !!config.preHandle && !!config.preHandle[name] && config.preHandle[name];
         typeof index == 'undefined' && (
-            console.error("环境变量 config.environment 没有配置, 默认取值为0的环境"),
+            console.log("环境变量 config.environment 没有配置, 默认取值为0的环境"),
                 index = 0
         );
         !!commonHandle && (
@@ -481,7 +481,7 @@ if (typeof jQuery === 'undefined') {
             commonRefactor = !!config.responseRefactor && !!config.responseRefactor.common && config.responseRefactor.common,
             nameRefactor = !!config.responseRefactor && !!config.responseRefactor[name] && config.responseRefactor[name];
         typeof index == 'undefined' && (
-            console.error("环境变量 config.environment 没有配置, 默认取值为0的环境"),
+            console.log("环境变量 config.environment 没有配置, 默认取值为0的环境"),
                 index = 0
         );
         !!commonRefactor && (
