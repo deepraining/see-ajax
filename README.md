@@ -128,5 +128,8 @@ postHandle: {
 ### 3. 方法
 
 * $.seeAjax.config(config) 初始化页面
+* $.seeAjax.getEnv() 获取当前的环境值
 * $.seeAjax.get(url, data, callback[, type]) get请求，url是索引值还是键名（字符串）取决于配置，data是数组还是map也取决于配置
 * $.seeAjax.post(url, data, callback[, type][, stringify]) post请求，其他同get请求(stringify: 是否序列化请求参数)
+* $.seeAjax.put(url, data, callback[, type][, stringify])
+* $.seeAjax.delete(url, data, callback[, type][, stringify])

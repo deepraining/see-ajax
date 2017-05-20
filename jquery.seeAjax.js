@@ -413,7 +413,7 @@ if (typeof jQuery === 'undefined') {
             index = config.environment,
             newData = {};
         typeof index == 'undefined' && (
-            console.log("环境变量 config.environment 没有配置, 默认取值为0的环境"),
+            console.info("环境变量 config.environment 没有配置, 默认取值为0的环境"),
             index = 0
         );
         !name && (
@@ -611,6 +611,14 @@ if (typeof jQuery === 'undefined') {
      */
     request.delete = function (url, data, callback, type, stringify) {
         request.beyondGet('delete', url, data, callback, type, stringify);
+    };
+
+    /**
+     * 获取当前配置的环境值
+     * @returns {number}
+     */
+    request.getEnv = function () {
+        return config.environment ? config.environment : 0;
     };
 
     /**
