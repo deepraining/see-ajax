@@ -573,7 +573,7 @@ if (typeof jQuery === 'undefined') {
      * @param stringify
      */
     request.beyondGet = function (method, url, data, callback, type, stringify) {
-        arguments.length == 5 && typeof type == 'boolean' && (
+        typeof type == 'boolean' && (
             stringify = type,
                 type = 'json'
         );

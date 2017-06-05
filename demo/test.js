@@ -111,7 +111,7 @@ $.seeAjax.get('test', {key1: 'haha'}, function (res) {
         console.log(res);
 
         makeTest2();
-    });
+    }, !0);
 });
 
 function makeTest2() {
