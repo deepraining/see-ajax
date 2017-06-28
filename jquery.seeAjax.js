@@ -529,29 +529,26 @@ if (typeof jQuery === 'undefined') {
      * @param callback 请求回调
      * @param type 请求返回数据类型
      * @param stringify  是否序列化请求参数
+     * @param {{}} extraOptions 其他参数
      */
-    request.send = function (method, url, data, callback, type, stringify) {
+    request.send = function (method, url, data, callback, type, stringify, extraOptions) {
         var formatData = request.getFormatData(url, data);
         !type && (type = 'json');
         //前置处理
         request.preHandle(formatData[1], url);
-        //请求
-        //$[method](formatData[0], !stringify ? formatData[1] : JSON.stringify(formatData[1]), function (res) {
-        //    //后置处理
-        //    request.postHandle(res, url);
-        //    callback(res);
-        //}, type);
 
-        $.ajax(formatData[0], {
-            type: method,
-            data: !stringify ? formatData[1] : JSON.stringify(formatData[1]),
-            dataType: type,
-            success: function (res) {
+        var options = extraOptions || {};
+
+            options.type = method;
+            options.data = !stringify ? formatData[1] : JSON.stringify(formatData[1]);
+            options.dataType = type;
+            options.success = function (res) {
                 //后置处理
                 request.postHandle(res, url);
                 callback(res);
-            }
-        });
+            };
+
+        $.ajax(formatData[0], options);
     };
     /**
      * 发起get请求
@@ -559,9 +556,16 @@ if (typeof jQuery === 'undefined') {
      * @param data
      * @param callback
      * @param type
+     * @param extraOptions
      */
-    request.get = function (url, data, callback, type) {
-        request.send("get", url, data, callback, type, !1);
+    request.get = function (url, data, callback, type, extraOptions) {
+
+        if (typeof type == 'object'){
+            extraOptions = type;
+            type = void 0;
+        }
+
+        request.send("get", url, data, callback, type, !1, extraOptions);
     };
     /**
      * get 方法之外的其他请求
@@ -571,13 +575,26 @@ if (typeof jQuery === 'undefined') {
      * @param callback
      * @param type
      * @param stringify
+     * @param extraOptions
      */
-    request.beyondGet = function (method, url, data, callback, type, stringify) {
-        typeof type == 'boolean' && (
-            stringify = type,
-                type = 'json'
-        );
-        request.send(method, url, data, callback, type, stringify);
+    request.beyondGet = function (method, url, data, callback, type, stringify, extraOptions) {
+        if (typeof type == 'boolean') {
+            if (typeof stringify == 'object') {
+                extraOptions = stringify;
+                stringify = type;
+                type = void 0;
+            }
+            else {
+                stringify = type;
+                type = void 0;
+            }
+        }
+        else if (typeof type == 'object') {
+            extraOptions = type;
+            type = void 0;
+            stringify = void 0;
+        }
+        request.send(method, url, data, callback, type, stringify, extraOptions);
     };
     /**
      * 发起post请求
@@ -586,9 +603,10 @@ if (typeof jQuery === 'undefined') {
      * @param callback
      * @param type
      * @param stringify
+     * @param extraOptions
      */
-    request.post = function (url, data, callback, type, stringify) {
-        request.beyondGet('post', url, data, callback, type, stringify);
+    request.post = function (url, data, callback, type, stringify, extraOptions) {
+        request.beyondGet('post', url, data, callback, type, stringify, extraOptions);
     };
     /**
      * 发起put请求
@@ -597,9 +615,10 @@ if (typeof jQuery === 'undefined') {
      * @param callback
      * @param type
      * @param stringify
+     * @param extraOptions
      */
-    request.put = function (url, data, callback, type, stringify) {
-        request.beyondGet('put', url, data, callback, type, stringify);
+    request.put = function (url, data, callback, type, stringify, extraOptions) {
+        request.beyondGet('put', url, data, callback, type, stringify, extraOptions);
     };
     /**
      * 发起delete请求
@@ -608,9 +627,10 @@ if (typeof jQuery === 'undefined') {
      * @param callback
      * @param type
      * @param stringify
+     * @param extraOptions
      */
-    request.delete = function (url, data, callback, type, stringify) {
-        request.beyondGet('delete', url, data, callback, type, stringify);
+    request.delete = function (url, data, callback, type, stringify, extraOptions) {
+        request.beyondGet('delete', url, data, callback, type, stringify, extraOptions);
     };
 
     /**

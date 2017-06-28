@@ -129,7 +129,14 @@ postHandle: {
 
 * $.seeAjax.config(config) 初始化页面
 * $.seeAjax.getEnv() 获取当前的环境值
-* $.seeAjax.get(url, data, callback[, type]) get请求，url是索引值还是键名（字符串）取决于配置，data是数组还是map也取决于配置
-* $.seeAjax.post(url, data, callback[, type][, stringify]) post请求，其他同get请求(stringify: 是否序列化请求参数)
-* $.seeAjax.put(url, data, callback[, type][, stringify])
-* $.seeAjax.delete(url, data, callback[, type][, stringify])
+* $.seeAjax.get(url, data, callback[, type][, extraOptions]) get请求
+* $.seeAjax.post(url, data, callback[, type][, stringify][, extraOptions]) post请求
+* $.seeAjax.put(url, data, callback[, type][, stringify][, extraOptions]) put请求
+* $.seeAjax.delete(url, data, callback[, type][, stringify][, extraOptions]) delete请求
+
+说明：
+
+* url：索引值或者键名（字符串），取决于配置
+* data：数组或者map，取决于配置
+* stringify：是否序列化请求参数
+* extraOptions：其他需要的 jQuery ajax 配置参数
