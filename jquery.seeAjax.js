@@ -4,8 +4,9 @@ if (typeof jQuery === 'undefined') {
 
 /**
  * json-refactor
+ * Created by senntyou on 2016/11/22.
  */
-(function(global) {
+(function( self ) {
 
     /**
      * 模拟函数
@@ -91,7 +92,7 @@ if (typeof jQuery === 'undefined') {
             case 'string':
                 return value + '';
             default :
-                !!window[format] && typeof window[format] == 'function' ? (value = window[format](value)) : (
+                !!self[format] && typeof self[format] == 'function' ? (value = self[format](value)) : (
                     console.error("" + format + "：没有此内置操作，也无此全局函数")
                 );
                 return value;
@@ -113,27 +114,27 @@ if (typeof jQuery === 'undefined') {
             value;
         if (length == 2) {
             hasArrayMark ? (
-                value = typeof target[originKeyArrayByDot[0]] != 'undefined' && target[originKeyArrayByDot[0]]
+                value = target[originKeyArrayByDot[0]] != undefined && target[originKeyArrayByDot[0]]
             ) : (
-                value = typeof target[originKeyArrayByDot[0]] != 'undefined' && target[originKeyArrayByDot[0]][originKeyArrayByDot[1]]
+                value = target[originKeyArrayByDot[0]] != undefined && target[originKeyArrayByDot[0]][originKeyArrayByDot[1]]
             );
         } else if (length == 3) {
             hasArrayMark ? (
-                value = typeof target[originKeyArrayByDot[0]] != 'undefined' && typeof target[originKeyArrayByDot[0]][originKeyArrayByDot[1]] != 'undefined' &&
+                value = target[originKeyArrayByDot[0]] != undefined && target[originKeyArrayByDot[0]][originKeyArrayByDot[1]] != undefined &&
                     target[originKeyArrayByDot[0]][originKeyArrayByDot[1]]
             ) : (
-                value = typeof target[originKeyArrayByDot[0]] != 'undefined' && typeof target[originKeyArrayByDot[0]][originKeyArrayByDot[1]] != 'undefined' &&
+                value = target[originKeyArrayByDot[0]] != undefined && target[originKeyArrayByDot[0]][originKeyArrayByDot[1]] != undefined &&
                     target[originKeyArrayByDot[0]][originKeyArrayByDot[1]][originKeyArrayByDot[2]]
             );
 
         } else if (length == 4) {
             hasArrayMark ? (
-                value = typeof target[originKeyArrayByDot[0]] != 'undefined' && typeof target[originKeyArrayByDot[0]][originKeyArrayByDot[1]] != 'undefined' &&
-                    typeof target[originKeyArrayByDot[0]][originKeyArrayByDot[1]][originKeyArrayByDot[2]] != 'undefined' &&
+                value = target[originKeyArrayByDot[0]] != undefined && target[originKeyArrayByDot[0]][originKeyArrayByDot[1]] != undefined &&
+                    target[originKeyArrayByDot[0]][originKeyArrayByDot[1]][originKeyArrayByDot[2]] != undefined &&
                     target[originKeyArrayByDot[0]][originKeyArrayByDot[1]][originKeyArrayByDot[2]]
             ) : (
-                value = typeof target[originKeyArrayByDot[0]] != 'undefined' && typeof target[originKeyArrayByDot[0]][originKeyArrayByDot[1]] != 'undefined' &&
-                    typeof target[originKeyArrayByDot[0]][originKeyArrayByDot[1]][originKeyArrayByDot[2]] != 'undefined' &&
+                value = target[originKeyArrayByDot[0]] != undefined && target[originKeyArrayByDot[0]][originKeyArrayByDot[1]] != undefined &&
+                    target[originKeyArrayByDot[0]][originKeyArrayByDot[1]][originKeyArrayByDot[2]] != undefined &&
                     target[originKeyArrayByDot[0]][originKeyArrayByDot[1]][originKeyArrayByDot[2]][originKeyArrayByDot[3]]
             );
 
@@ -349,16 +350,16 @@ if (typeof jQuery === 'undefined') {
 
                 mapValue = map[mapKey];
                 //如果是以下划线开头，并且在原数据中不存在这个键，则就是某个字段的二次改变
-                /**
-                 * 修复微信浏览器不支持函数 startsWith, 用slice函数代替
-                 */
-                if (mapKey.slice(0, 1) == '_' && typeof target[mapKey] == 'undefined') {
+                if (mapKey.startsWith('_') && typeof target[mapKey] == 'undefined') {
                     targetValue = target[mapKey.slice(1)];
+                    // 如果值不存在，返回
+                    if (!targetValue) return;
                 } else {
                     targetValue = target[mapKey];
                 }
+
                 //是对象或数组并且原数据中存在这个字段
-                if (typeof mapValue == 'object' && !!targetValue) {
+                if (typeof mapValue == 'object') {
                     Array.isArray(mapValue) ? (//array
                         targetValue.map(function (item) {
                             //如果是对象或数组
@@ -392,9 +393,10 @@ if (typeof jQuery === 'undefined') {
         !!map && typeof map == 'object' ? format(target, map) : console.error("传入的map格式有误，请传入对象或数组");
         return target;
     };
-    global.JSON.refactor = jsonRefactor;
 
-})(typeof window !== "undefined" ? window : this);
+    JSON.refactor = jsonRefactor;
+
+})( this );
 
 (function($) {
 
