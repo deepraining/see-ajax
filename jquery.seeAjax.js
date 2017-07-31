@@ -2,10 +2,6 @@ if (typeof jQuery === 'undefined') {
     throw new Error('jquery.seeAjax requires jQuery')
 }
 
-/**
- * json-refactor
- * Created by senntyou on 2016/11/22.
- */
 (function( self ) {
 
     /**
@@ -350,7 +346,10 @@ if (typeof jQuery === 'undefined') {
 
                 mapValue = map[mapKey];
                 //如果是以下划线开头，并且在原数据中不存在这个键，则就是某个字段的二次改变
-                if (mapKey.startsWith('_') && typeof target[mapKey] == 'undefined') {
+                /**
+                 * 修复微信浏览器不支持函数 startsWith, 用slice函数代替
+                 */
+                if (mapKey.slice(0, 1) == '_'  && typeof target[mapKey] == 'undefined') {
                     targetValue = target[mapKey.slice(1)];
                     // 如果值不存在，返回
                     if (!targetValue) return;
