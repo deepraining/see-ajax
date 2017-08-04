@@ -2,6 +2,10 @@ if (typeof jQuery === 'undefined') {
     throw new Error('jquery.seeAjax requires jQuery')
 }
 
+/**
+ * json-refactor
+ * Created by senntyou on 2016/11/22.
+ */
 (function( self ) {
 
     /**
@@ -330,44 +334,75 @@ if (typeof jQuery === 'undefined') {
 
     //格式化json
     function format(target, map) {
-        if (!map || typeof map != 'object') return;
+
+        if (typeof target != 'object' || typeof map != 'object') return;
 
         //是数组
-        Array.isArray(map) ? (
+        if (Array.isArray(map)) {
+            // 目标不是数组
+            if (!Array.isArray(target)) {
+                console.error('target类型与map类型不匹配');
+                console.error('target: ' + JSON.stringify(target));
+                console.error('map: ' + JSON.stringify(map));
+                return;
+            }
             target.map(function (item) {
                 //如果是对象或数组
-                !!map[0] && typeof map[0] == 'object' && typeof item == 'object' && format(item, map[0]);
-            })
-        ) : (
-            //是对象
+                typeof map[0] == 'object' && typeof item == 'object' && format(item, map[0]);
+            });
+        }
+        //是对象
+        else {
+            // 目标是数组
+            if (Array.isArray(target)) {
+                console.error('target类型与map类型不匹配');
+                console.error('target: ' + JSON.stringify(target));
+                console.error('map: ' + JSON.stringify(map));
+                return;
+            }
             Object.keys(map).map(function (mapKey) {
                 var mapValue,//map值
                     targetValue;//目标值
 
                 mapValue = map[mapKey];
                 //如果是以下划线开头，并且在原数据中不存在这个键，则就是某个字段的二次改变
-                /**
-                 * 修复微信浏览器不支持函数 startsWith, 用slice函数代替
-                 */
                 if (mapKey.slice(0, 1) == '_'  && typeof target[mapKey] == 'undefined') {
                     targetValue = target[mapKey.slice(1)];
-                    // 如果值不存在，返回
-                    if (!targetValue) return;
                 } else {
                     targetValue = target[mapKey];
                 }
+                // 如果值不存在，返回
+                if (!targetValue) return;
 
                 //是对象或数组并且原数据中存在这个字段
                 if (typeof mapValue == 'object') {
-                    Array.isArray(mapValue) ? (//array
+                    //array
+                    if (Array.isArray(mapValue)) {
+                        // 目标不是数组
+                        if (!Array.isArray(targetValue)) {
+                            console.error('target类型与map类型不匹配');
+                            console.error('target: ' + JSON.stringify(targetValue));
+                            console.error('map: ' + JSON.stringify(mapValue));
+                            return;
+                        }
                         targetValue.map(function (item) {
                             //如果是对象或数组
-                            if (!!mapValue[0] && typeof mapValue[0] == 'object' && typeof item == 'object') format(item, mapValue[0]);
+                            if (typeof mapValue[0] == 'object' && typeof item == 'object') format(item, mapValue[0]);
                         })
-                    ) : (//object
-                        format(targetValue, mapValue)
-                    );
-                } else if (typeof mapValue == 'string') {
+                    }
+                    //object
+                    else {
+                        // 目标是数组
+                        if (Array.isArray(targetValue)) {
+                            console.error('target类型与map类型不匹配');
+                            console.error('target: ' + JSON.stringify(targetValue));
+                            console.error('map: ' + JSON.stringify(mapValue));
+                            return;
+                        }
+                        format(targetValue, mapValue);
+                    }
+                }
+                else if (typeof mapValue == 'string') {
                     //字符串
                     convertValue(target, map, mapKey);
                 }
@@ -375,7 +410,7 @@ if (typeof jQuery === 'undefined') {
                     console.error('无法解析key: \n' + (typeof mapValue == 'string' ? mapValue : (typeof mapValue == 'object' ? JSON.stringify(mapValue) : '')));
                 }
             })
-        );
+        }
     }
 
     /**
@@ -385,11 +420,22 @@ if (typeof jQuery === 'undefined') {
      * @param returnNewJson 是否返回新的json文件（默认：false）
      */
     var jsonRefactor = function (source, map, returnNewJson) {
+
+        if (typeof source != 'object') {
+            console.error("传入的source格式有误，请传入对象或数组");
+            return target;
+        }
+        if (typeof map != 'object') {
+            console.error("传入的map格式有误，请传入对象或数组");
+            return target;
+        }
+
         var target = !!returnNewJson ? (
-            source instanceof Array ? cloneArray(source) : cloneObject(source)
+            Array.isArray(source) ? cloneArray(source) : cloneObject(source)
         ) : source;
 
-        !!map && typeof map == 'object' ? format(target, map) : console.error("传入的map格式有误，请传入对象或数组");
+        format(target, map);
+
         return target;
     };
 
