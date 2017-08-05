@@ -332,34 +332,36 @@ if (typeof jQuery === 'undefined') {
 
     }
 
+    // 检查target与map的类型是否匹配
+    function checkTargetMapMatch (target, map) {
+        if (typeof target != 'object' || typeof map != 'object') {
+            console.error('target与map必须是对象或数组');
+            return !1;
+        }
+
+        if (Array.isArray(map) && !Array.isArray(target) || !Array.isArray(map) && Array.isArray(target)) {
+            console.error('target类型与map类型不匹配');
+            console.error('target: ' + JSON.stringify(target));
+            console.error('map: ' + JSON.stringify(map));
+            return !1;
+        }
+
+        return !0
+    }
+
     //格式化json
     function format(target, map) {
 
-        if (typeof target != 'object' || typeof map != 'object') return;
+        if (!checkTargetMapMatch(target, map)) return;
 
         //是数组
         if (Array.isArray(map)) {
-            // 目标不是数组
-            if (!Array.isArray(target)) {
-                console.error('target类型与map类型不匹配');
-                console.error('target: ' + JSON.stringify(target));
-                console.error('map: ' + JSON.stringify(map));
-                return;
-            }
             target.map(function (item) {
-                //如果是对象或数组
-                typeof map[0] == 'object' && typeof item == 'object' && format(item, map[0]);
+                format(item, map[0]);
             });
         }
         //是对象
         else {
-            // 目标是数组
-            if (Array.isArray(target)) {
-                console.error('target类型与map类型不匹配');
-                console.error('target: ' + JSON.stringify(target));
-                console.error('map: ' + JSON.stringify(map));
-                return;
-            }
             Object.keys(map).map(function (mapKey) {
                 var mapValue,//map值
                     targetValue;//目标值
@@ -371,34 +373,22 @@ if (typeof jQuery === 'undefined') {
                 } else {
                     targetValue = target[mapKey];
                 }
-                // 如果值不存在，返回
-                if (!targetValue) return;
 
                 //是对象或数组并且原数据中存在这个字段
                 if (typeof mapValue == 'object') {
+
+                    if (!checkTargetMapMatch(targetValue, mapValue)) return;
+
                     //array
                     if (Array.isArray(mapValue)) {
-                        // 目标不是数组
-                        if (!Array.isArray(targetValue)) {
-                            console.error('target类型与map类型不匹配');
-                            console.error('target: ' + JSON.stringify(targetValue));
-                            console.error('map: ' + JSON.stringify(mapValue));
-                            return;
-                        }
                         targetValue.map(function (item) {
-                            //如果是对象或数组
-                            if (typeof mapValue[0] == 'object' && typeof item == 'object') format(item, mapValue[0]);
+                            if (!checkTargetMapMatch(item, mapValue[0])) return;
+
+                            format(item, mapValue[0]);
                         })
                     }
                     //object
                     else {
-                        // 目标是数组
-                        if (Array.isArray(targetValue)) {
-                            console.error('target类型与map类型不匹配');
-                            console.error('target: ' + JSON.stringify(targetValue));
-                            console.error('map: ' + JSON.stringify(mapValue));
-                            return;
-                        }
                         format(targetValue, mapValue);
                     }
                 }
@@ -461,7 +451,7 @@ if (typeof jQuery === 'undefined') {
             newData = {};
         typeof index == 'undefined' && (
             console.info("环境变量 config.environment 没有配置, 默认取值为0的环境"),
-            index = 0
+                index = 0
         );
         !name && (
             console.error("config.url中无 " + url + " 对应的值")
@@ -586,14 +576,14 @@ if (typeof jQuery === 'undefined') {
 
         var options = extraOptions || {};
 
-            options.type = method;
-            options.data = !stringify ? formatData[1] : JSON.stringify(formatData[1]);
-            options.dataType = type;
-            options.success = function (res) {
-                //后置处理
-                request.postHandle(res, url);
-                callback(res);
-            };
+        options.type = method;
+        options.data = !stringify ? formatData[1] : JSON.stringify(formatData[1]);
+        options.dataType = type;
+        options.success = function (res) {
+            //后置处理
+            request.postHandle(res, url);
+            callback(res);
+        };
 
         $.ajax(formatData[0], options);
     };
