@@ -5,16 +5,29 @@
 $.seeAjax.config({
     environment: 0, //环境标识（用于数组选值）：0->服务器环境, 1->本地环境
     name: {
-        test: "test"
+        test: "test",
+        realize: 'realize'
     },
     url: {
         test: [
             "a.json",
             "b.json"
+        ],
+        realize: [
+            "",
+            "b.json"
         ]
     },
     requestKeys: {
         test: [
+            {
+                key1: 'keya'
+            },
+            {
+                key1: 'keyb'
+            }
+        ],
+        realize: [
             {
                 key1: 'keya'
             },
@@ -59,6 +72,34 @@ $.seeAjax.config({
                     }
                 ]
             }
+        ],
+        realize: [
+            {
+                data: [
+                    {
+                        newId: 'id',
+                        images: 'pics',
+                        _images: [
+                            {
+                                newId: 'id',
+                                newSrc: 'src'
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                data: [
+                    {
+                        images: [
+                            {
+                                newId: 'id',
+                                newSrc: 'src'
+                            }
+                        ]
+                    }
+                ]
+            }
         ]
     },
     preHandle: {
@@ -71,6 +112,14 @@ $.seeAjax.config({
             }
         ],
         test: [
+            function (data) {
+                data.test = '0'
+            },
+            function (data) {
+                data.test = '1'
+            }
+        ],
+        realize: [
             function (data) {
                 data.test = '0'
             },
@@ -95,6 +144,52 @@ $.seeAjax.config({
             function (data) {
                 data.test = '1'
             }
+        ],
+        realize: [
+            function (data) {
+                data.test = '0'
+            },
+            function (data) {
+                data.test = '1'
+            }
+        ]
+    },
+    realize: {
+        realize: [
+            function (data) {
+                return {
+                    "result": 1,
+                    "msg": "success",
+                    "data": [
+                        {
+                            "id": 1,
+                            "pics": [
+                                {
+                                    "id": 1,
+                                    "src": "a.jpg"
+                                },
+                                {
+                                    "id": 2,
+                                    "src": "b.jpg"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 2,
+                            "pics": [
+                                {
+                                    "id": 11,
+                                    "src": "aa.jpg"
+                                },
+                                {
+                                    "id": 22,
+                                    "src": "bb.jpg"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
         ]
     }
 });
@@ -112,6 +207,11 @@ $.seeAjax.get('test', {key1: 'haha'}, function (res) {
 
         makeTest2();
     }, !0);
+});
+
+$.seeAjax.get('realize', {key1: 'haha'}, function (res) {
+    console.log('env: 0');
+    console.log(res);
 });
 
 function makeTest2() {

@@ -8,13 +8,15 @@
     "jquery",
     "ajax"
   ],
-  "main": "jquery.seeAjax.js",
+  "main": "dist/jquery.seeAjax.js",
   "dependencies": {
     "jquery": "1.9.1 - 3"
   },
   "devDependencies": {
-    "gulp": "git://github.com/gulpjs/gulp#4.0",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
     "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^1.5.3"
+    "gulp-uglify": "^1.5.3",
+    "gulp-wrap": "^0.13.0"
   }
 }

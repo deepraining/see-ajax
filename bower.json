@@ -10,7 +10,7 @@
   "license": "MIT",
   "moduleType": "globals",
   "main": [
-    "jquery.seeAjax.js"
+    "dist/jquery.seeAjax.js"
   ],
   "ignore": [
     "**/.*",

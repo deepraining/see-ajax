@@ -18,99 +18,113 @@ $.seeAjax.config(config);
 示例配置
 
 ```
-environment: 0, //环境标识（用于数组选值）：0->服务器环境, 1->本地环境
-name: {
-    test: "test"
-},
-url: {
-    test: [
-        "a.json",
-        "b.json"
-    ]
-},
-requestKeys: {
-    test: [
-        {
-            key1: 'keya'
-        },
-        {
-            key1: 'keyb'
-        }
-    ]
-},
-responseRefactor: {
-    common: [
-        {
-            success: 'result!bool'
-        },
-        {
-            success: 'result!bool'
-        }
-    ],
-    test: [
-        {
-            data: [
-                {
-                    newId: 'id',
-                    images: 'pics',
-                    _images: [
-                        {
-                            newId: 'id',
-                            newSrc: 'src'
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            data: [
-                {
-                    images: [
-                        {
-                            newId: 'id',
-                            newSrc: 'src'
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
-},
-preHandle: {
-    common: [
-        function (data) {
-            data.common = '0'
-        },
-        function (data) {
-            data.common = '1'
-        }
-    ],
-    test: [
-        function (data) {
-            data.test = '0'
-        },
-        function (data) {
-            data.test = '1'
-        }
-    ]
-},
-postHandle: {
-    common: [
-        function (data) {
-            data.common = '0'
-        },
-        function (data) {
-            data.common = '1'
-        }
-    ],
-    test: [
-        function (data) {
-            data.test = '0'
-        },
-        function (data) {
-            data.test = '1'
-        }
-    ]
+{
+    environment: 0, //环境标识（用于数组选值）：0->服务器环境, 1->本地环境
+    name: {
+        test: "test"
+    },
+    url: {
+        test: [
+            "a.json",
+            "b.json"
+        ]
+    },
+    requestKeys: {
+        test: [
+            {
+                key1: 'keya'
+            },
+            {
+                key1: 'keyb'
+            }
+        ]
+    },
+    responseRefactor: {
+        common: [
+            {
+                success: 'result!bool'
+            },
+            {
+                success: 'result!bool'
+            }
+        ],
+        test: [
+            {
+                data: [
+                    {
+                        newId: 'id',
+                        images: 'pics',
+                        _images: [
+                            {
+                                newId: 'id',
+                                newSrc: 'src'
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                data: [
+                    {
+                        images: [
+                            {
+                                newId: 'id',
+                                newSrc: 'src'
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    preHandle: {
+        common: [
+            function (data) {
+                data.common = '0'
+            },
+            function (data) {
+                data.common = '1'
+            }
+        ],
+        test: [
+            function (data) {
+                data.test = '0'
+            },
+            function (data) {
+                data.test = '1'
+            }
+        ]
+    },
+    postHandle: {
+        common: [
+            function (data) {
+                data.common = '0'
+            },
+            function (data) {
+                data.common = '1'
+            }
+        ],
+        test: [
+            function (data) {
+                data.test = '0'
+            },
+            function (data) {
+                data.test = '1'
+            }
+        ]
+    },
+    realize: {
+        test: [
+            function (data) {
+                var result = {test: 0};
+                return result;
+            },
+            function (data) {
+                var result = {test: 1};
+                return result;
+            }
+        ]
+    }
 }
 ```
 
@@ -123,11 +137,14 @@ postHandle: {
 * responseRefactor: 针对返回的json数据做重构。[json-refactor](https://github.com/senntyou/json-refactor)（common是保留字段，会应用在每一个返回上）
 * preHandle: 请求预处理。针对请求做更多的动态处理。（common是保留字段，会应用在每一个返回上）
 * postHandle: 请求后置处理。针对返回的数据做更多的动态处理，在json重构之后执行。（common是保留字段，会应用在每一个返回上）
-* 执行流程：url -> requestKeys -> preHandle(common) -> preHandle(special) -> responseRefactor -> postHandle(common) -> postHandle(special)
+* 执行流程：url -> requestKeys -> preHandle(common) -> preHandle(specified) -> responseRefactor -> postHandle(common) -> postHandle(specified)
+* realize: 自定义实现返回数据，代替ajax
+    1. 在前后端分离，并行开发的过程中，或为了加快响应速度，有可能是以模板字符串的形式返回到前端，这个函数便是为此而生
+    2. 参数会传入原有请求的 data 值，并且应当有返回值
 
 ### 3. 方法
 
-* $.seeAjax.config(config) 初始化页面
+* $.seeAjax.config(config) 配置（可多次配置）
 * $.seeAjax.getEnv() 获取当前的环境值
 * $.seeAjax.get(url, data, callback[, type][, extraOptions]) get请求
 * $.seeAjax.post(url, data, callback[, type][, stringify][, extraOptions]) post请求
