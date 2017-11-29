@@ -1,16 +1,20 @@
 # 一个封装的 jQuery ajax 请求，可以通过配置更新请求参数，前置处理，json序列化，后置处理
 
 ## 内置
+
 * [json-refactor](https://github.com/senntyou/json-refactor)
 
-## use
+## 使用
 
 ### 1. 加载脚本
+
 ```
 <script src="jquery.js"></script>
 <script src="jquery.seeAjax.js"></script>
 ```
+
 ### 2. 加载配置
+
 ```
 $.seeAjax.config(config);
 ```
@@ -79,47 +83,47 @@ $.seeAjax.config(config);
     },
     preHandle: {
         common: [
-            function (data) {
-                data.common = '0'
+            function (req) {
+                req.common = 0
             },
-            function (data) {
-                data.common = '1'
+            function (req) {
+                req.common = 1
             }
         ],
         test: [
-            function (data) {
-                data.test = '0'
+            function (req) {
+                req.test = 0
             },
-            function (data) {
-                data.test = '1'
+            function (req) {
+                req.test = 1
             }
         ]
     },
     postHandle: {
         common: [
-            function (data) {
-                data.common = '0'
+            function (res, req) {
+                res.common = 0
             },
-            function (data) {
-                data.common = '1'
+            function (res, req) {
+                res.common = 1
             }
         ],
         test: [
-            function (data) {
-                data.test = '0'
+            function (res, req) {
+                res.test = 0
             },
-            function (data) {
-                data.test = '1'
+            function (res, req) {
+                res.test = 1
             }
         ]
     },
     realize: {
         test: [
-            function (data) {
+            function (req) {
                 var result = {test: 0};
                 return result;
             },
-            function (data) {
+            function (req) {
                 var result = {test: 1};
                 return result;
             }

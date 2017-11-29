@@ -502,9 +502,10 @@ if (typeof jQuery === 'undefined') {
     /**
      * 后置处理返回的数据
      * @param res json: 请求数据
+     * @param req 请求的参数
      * @param url int/string
      */
-    request.postHandle = function (res, url) {
+    request.postHandle = function (res, req, url) {
         var name = config.name[url],
             index = config.environment,
             commonHandle = !!config.postHandle && !!config.postHandle.common && config.postHandle.common,
@@ -536,19 +537,19 @@ if (typeof jQuery === 'undefined') {
         !!commonHandle && (
             typeof commonHandle == 'function' ? (
                 //是函数
-                !index && commonHandle(res)
+                !index && commonHandle(res, req)
             ) : (
                 //数组
-                !!commonHandle[index] && commonHandle[index](res)
+                !!commonHandle[index] && commonHandle[index](res, req)
             )
         );
         !!nameHandle && (
             typeof nameHandle == 'function' ? (
                 //是函数
-                !index && nameHandle(res)
+                !index && nameHandle(res, req)
             ) : (
                 //数组
-                !!nameHandle[index] && nameHandle[index](res)
+                !!nameHandle[index] && nameHandle[index](res, req)
             )
         );
     };
@@ -586,7 +587,7 @@ if (typeof jQuery === 'undefined') {
             options.dataType = type;
             options.success = function (res) {
                 //后置处理
-                request.postHandle(res, url);
+                request.postHandle(res, data, url);
                 callback(res);
             };
             $.ajax(formatData[0], options);
@@ -603,7 +604,7 @@ if (typeof jQuery === 'undefined') {
             console.info(result);
 
             //后置处理
-            request.postHandle(result, url);
+            request.postHandle(result, data, url);
             callback(result);
         }
     };

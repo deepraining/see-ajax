@@ -104,53 +104,61 @@ $.seeAjax.config({
     },
     preHandle: {
         common: [
-            function (data) {
-                data.common = '0'
+            function (req) {
+                req.common = 0
             },
-            function (data) {
-                data.common = '1'
+            function (req) {
+                req.common = 1
             }
         ],
         test: [
-            function (data) {
-                data.test = '0'
+            function (req) {
+                req.test = 0
             },
-            function (data) {
-                data.test = '1'
+            function (req) {
+                req.test = 1
             }
         ],
         realize: [
-            function (data) {
-                data.test = '0'
+            function (req) {
+                req.test = 0
             },
-            function (data) {
-                data.test = '1'
+            function (req) {
+                req.test = 1
             }
         ]
     },
     postHandle: {
         common: [
-            function (data) {
-                data.common = '0'
+            function (res, req) {
+                res.common = 0;
+                console.log('req:');
+                console.log(req);
             },
-            function (data) {
-                data.common = '1'
+            function (res, req) {
+                res.common = 1;
+                console.log('req:');
+                console.log(req);
             }
         ],
         test: [
-            function (data) {
-                data.test = '0'
+            function (res, req) {
+                res.test = 0;
+                console.log('req:');
+                console.log(req);
             },
-            function (data) {
-                data.test = '1'
+            function (res, req) {
+                res.test = 1;
+                console.log('req:');
+                console.log(req);
             }
         ],
         realize: [
-            function (data) {
-                data.test = '0'
+            function (res) {
+                res.test = 0
             },
-            function (data) {
-                data.test = '1'
+            function (res) {
+                res.test = 1
             }
         ]
     },
@@ -276,37 +284,37 @@ function makeTest2() {
         },
         preHandle: {
             common: [
-                function (data) {
-                    data.common2 = '0'
+                function (req) {
+                    req.common2 = 0
                 },
-                function (data) {
-                    data.common2 = '1'
+                function (req) {
+                    req.common2 = 1
                 }
             ],
             test2: [
-                function (data) {
-                    data.test2 = '0'
+                function (req) {
+                    req.test2 = 0
                 },
-                function (data) {
-                    data.test2 = '1'
+                function (req) {
+                    req.test2 = 1
                 }
             ]
         },
         postHandle: {
             common: [
-                function (data) {
-                    data.common2 = '0'
+                function (res) {
+                    res.common2 = 0
                 },
-                function (data) {
-                    data.common2 = '1'
+                function (res) {
+                    res.common2 = 1
                 }
             ],
             test2: [
-                function (data) {
-                    data.test2 = '0'
+                function (res) {
+                    res.test2 = 0
                 },
-                function (data) {
-                    data.test2 = '1'
+                function (res) {
+                    res.test2 = 1
                 }
             ]
         }
