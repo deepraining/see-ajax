@@ -162,7 +162,7 @@ if (typeof jQuery === 'undefined') {
             options.dataType = type;
             options.success = function (res) {
                 //后置处理
-                request.postHandle(res, data, url);
+                request.postHandle(res, options.data, url);
                 callback(res);
             };
             $.ajax(formatData[0], options);
