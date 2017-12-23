@@ -4,41 +4,8 @@ if (typeof jQuery === 'undefined') {
 
 (function($) {
 
-    var initialized = !1; // 是否初始化过
     var config = {};//配置
     var request = {};//请求
-
-    /**
-     * 格式化请求数据
-     * @param url int/string
-     * @param data []/{}
-     * @returns {*[]}
-     */
-    request.getFormatData = function (url, data) {
-        var name = config.name[url],
-            index = config.environment,
-            newData = {};
-        typeof index == 'undefined' && (
-            console.info("环境变量 config.environment 没有配置, 默认取值为0的环境"),
-                index = 0
-        );
-        !name && (
-            console.error("config.url中无 " + url + " 对应的值")
-        );
-        Array.isArray(data) ? (
-            data.map(function (item, idx) {
-                newData[config.requestKeys[name][index][idx]] = item
-            })
-        ) : (
-            Object.keys(data).map(function (item) {
-                newData[config.requestKeys[name][index][item]] = data[item]
-            })
-        );
-        return [
-            config.url[name][index],
-            newData
-        ];
-    };
 
     /**
      * 预处理请求数据
@@ -46,12 +13,12 @@ if (typeof jQuery === 'undefined') {
      * @param url int/string
      */
     request.preHandle = function (data, url) {
-        var name = config.name[url],
-            index = config.environment,
-            commonHandle = !!config.preHandle && !!config.preHandle.common && config.preHandle.common,
-            nameHandle = !!config.preHandle && !!config.preHandle[name] && config.preHandle[name];
+        var name = data.option.name[url],
+            index = data.option.env,
+            commonHandle = !!data.option.preHandle && !!data.option.preHandle.common && data.option.preHandle.common,
+            nameHandle = !!data.option.preHandle && !!data.option.preHandle[name] && data.option.preHandle[name];
         typeof index == 'undefined' && (
-            console.info("环境变量 config.environment 没有配置, 默认取值为0的环境"),
+            console.info("环境变量 data.option.env 没有配置, 默认取值为0的环境"),
                 index = 0
         );
         !!commonHandle && (
@@ -81,14 +48,14 @@ if (typeof jQuery === 'undefined') {
      * @param url int/string
      */
     request.postHandle = function (res, req, url) {
-        var name = config.name[url],
-            index = config.environment,
-            commonHandle = !!config.postHandle && !!config.postHandle.common && config.postHandle.common,
-            nameHandle = !!config.postHandle && !!config.postHandle[name] && config.postHandle[name],
-            commonRefactor = !!config.responseRefactor && !!config.responseRefactor.common && config.responseRefactor.common,
-            nameRefactor = !!config.responseRefactor && !!config.responseRefactor[name] && config.responseRefactor[name];
+        var name = data.option.name[url],
+            index = data.option.env,
+            commonHandle = !!data.option.postHandle && !!data.option.postHandle.common && data.option.postHandle.common,
+            nameHandle = !!data.option.postHandle && !!data.option.postHandle[name] && data.option.postHandle[name],
+            commonRefactor = !!data.option.responseRefactor && !!data.option.responseRefactor.common && data.option.responseRefactor.common,
+            nameRefactor = !!data.option.responseRefactor && !!data.option.responseRefactor[name] && data.option.responseRefactor[name];
         typeof index == 'undefined' && (
-            console.info("环境变量 config.environment 没有配置, 默认取值为0的环境"),
+            console.info("环境变量 data.option.env 没有配置, 默认取值为0的环境"),
                 index = 0
         );
         !!commonRefactor && (
@@ -128,61 +95,7 @@ if (typeof jQuery === 'undefined') {
             )
         );
     };
-    /**
-     * 发起请求
-     * @param method 请求方法
-     * @param url 请求地址
-     * @param data 请求json数据
-     * @param callback 请求回调
-     * @param type 请求返回数据类型
-     * @param stringify  是否序列化请求参数
-     * @param {{}} extraOptions 其他参数
-     */
-    request.send = function (method, url, data, callback, type, stringify, extraOptions) {
-        var formatData = request.getFormatData(url, data);
-        !type && (type = 'json');
-        //前置处理
-        request.preHandle(formatData[1], url);
 
-        var name = config.name[url],
-            index = config.environment,
-            realize;
-        typeof index == 'undefined' && (console.info("环境变量 config.environment 没有配置, 默认取值为0的环境"), index = 0);
-        !name ? console.error("config.url中无 " + url + " 对应的值") : (
-            config.realize && config.realize[name] && (
-                realize = typeof config.realize[name] == 'function' ? typeof config.realize[name] :
-                    (!!config.realize[name][index] ? config.realize[name][index] : void 0)
-            )
-        );
-
-        if (!realize) {
-            var options = extraOptions || {};
-            options.type = method;
-            options.data = !stringify ? formatData[1] : JSON.stringify(formatData[1]);
-            options.dataType = type;
-            options.success = function (res) {
-                //后置处理
-                request.postHandle(res, options.data, url);
-                callback(res);
-            };
-            $.ajax(formatData[0], options);
-        }
-        else {
-            var requestData = !stringify ? formatData[1] : JSON.stringify(formatData[1]);
-
-            console.info('Custom realize function for "' + url + '", and request data is: ');
-            console.info(requestData);
-
-            var result = realize(requestData);
-
-            console.info('result is: ');
-            console.info(result);
-
-            //后置处理
-            request.postHandle(result, data, url);
-            callback(result);
-        }
-    };
     /**
      * 发起get请求
      * @param url
@@ -264,29 +177,6 @@ if (typeof jQuery === 'undefined') {
      */
     request.delete = function (url, data, callback, type, stringify, extraOptions) {
         request.beyondGet('delete', url, data, callback, type, stringify, extraOptions);
-    };
-
-    /**
-     * 获取当前配置的环境值
-     * @returns {number}
-     */
-    request.getEnv = function () {
-        return config.environment ? config.environment : 0;
-    };
-
-    /**
-     * 设置配置，可多次调用
-     * @param paramConfig
-     */
-    request.config = function (paramConfig) {
-        // 未初始化过
-        if (!initialized) {
-            initialized = !0;
-            config = paramConfig;
-        }
-        else {
-            $.extend(true, config, paramConfig);
-        }
     };
 
     $.seeAjax = request;
