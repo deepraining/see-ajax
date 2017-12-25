@@ -31,7 +31,7 @@ $.seeAjax.doSomething
 </script>
 ```
 
-### 2. config current application's options'
+### 2. config current application's options
 
 ```
 seeAjax.config({...});
@@ -123,7 +123,7 @@ refactor response data, after ajax responding
 
 ```
 responseRefactor: {
-    common: []/{}, // common is system reserved keywork, this will apply to all environments
+    common: []/{}, // common is system reserved keywork, this will apply to all requests
     inlineName: [
         {... refactor map ...}, // env: 0
         {... refactor map ...}, // env: 1
@@ -146,18 +146,18 @@ more handling after `requestKeys`, before ajax sending
 
 ```
 preHandle: {
-    common: (reqData) => {... do something .. }, // common is system reserved keywork, this will apply to all environments
+    common: (reqData) => {... do something ...}, // common is system reserved keywork, this will apply to all requests
     inlineName: [
-        (reqData) => {... do something .. }, // env: 0
-        (reqData) => {... do something .. }, // env: 1
-        (reqData) => {... do something .. }, // env: 2
+        (reqData) => {... do something ...}, // env: 0
+        (reqData) => {... do something ...}, // env: 1
+        (reqData) => {... do something ...}, // env: 2
     ]
 }
 
 // or 
 preHandle: {
     // all environments will use this hanlder
-    inlineName: (reqData) => {... do something .. }
+    inlineName: (reqData) => {... do something ...}
 }
 ```
 
@@ -167,18 +167,18 @@ more handling after `responseRefactor`
 
 ```
 postHandle: {
-    common: (res, reqData, urlName) => {... do something .. }, // common is system reserved keywork, this will apply to all environments
+    common: (res, reqData, urlName) => {... do something ...}, // common is system reserved keywork, this will apply to all requests
     inlineName: [
-        (res, reqData, urlName) => {... do something .. }, // env: 0
-        (res, reqData, urlName) => {... do something .. }, // env: 1
-        (res, reqData, urlName) => {... do something .. }, // env: 2
+        (res, reqData, urlName) => {... do something ...}, // env: 0
+        (res, reqData, urlName) => {... do something ...}, // env: 1
+        (res, reqData, urlName) => {... do something ...}, // env: 2
     ]
 }
 
 // or 
 postHandle: {
     // all environments will use this hanlder
-    inlineName: (res, reqData, urlName) => {... do something .. }
+    inlineName: (res, reqData, urlName) => {... do something ...}
 }
 ```
 
@@ -191,16 +191,16 @@ sometimes, you have not to use ajax, but other ways, for some reasons, this is w
 ```
 implement: {
     inlineName: [
-        (res, reqData, urlName) => {... do something .. }, // env: 0
-        (res, reqData, urlName) => {... do something .. }, // env: 1
-        (res, reqData, urlName) => {... do something .. }, // env: 2
+        (res, reqData, urlName) => {... return a response ...}, // env: 0
+        (res, reqData, urlName) => {... return a response ...}, // env: 1
+        (res, reqData, urlName) => {... return a response ...}, // env: 2
     ]
 }
 
 // or 
 implement: {
     // all environments will use this hanlder
-    inlineName: (res, reqData, urlName) => {... do something .. }
+    inlineName: (res, reqData, urlName) => {... return a response ...}
 }
 ```
 
@@ -213,7 +213,7 @@ implement: {
 config options of current application
 
 ```
-seeAjax.config({ ... });
+seeAjax.config({ ....});
 ```
 
 ### getEnv
@@ -307,3 +307,4 @@ extra more ajax options, refer to [https://api.jquery.com/jQuery.ajax/](https://
     1. `common`: common handling, if have
     2. `yourName`: named handling
     
+## [demo code](./example)
