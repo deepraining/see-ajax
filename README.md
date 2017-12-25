@@ -10,7 +10,7 @@
 ### 1. load resources
 
 ```
-var seeAjax = require('jquery.seeAjax');
+var seeAjax = require('see-ajax');
 seeAjax.doSomething
 
 // or
