@@ -117,7 +117,7 @@ $.seeAjax.config(config);
             }
         ]
     },
-    realize: {
+    implement: {
         test: [
             function (req) {
                 var result = {test: 0};
@@ -142,7 +142,7 @@ $.seeAjax.config(config);
 * preHandle: 请求预处理。针对请求做更多的动态处理。（common是保留字段，会应用在每一个返回上）
 * postHandle: 请求后置处理。针对返回的数据做更多的动态处理，在json重构之后执行。（common是保留字段，会应用在每一个返回上）
 * 执行流程：url -> requestKeys -> preHandle(common) -> preHandle(specified) -> responseRefactor -> postHandle(common) -> postHandle(specified)
-* realize: 自定义实现返回数据，代替ajax
+* implement: 自定义实现返回数据，代替ajax
     1. 在前后端分离，并行开发的过程中，或为了加快响应速度，有可能是以模板字符串的形式返回到前端，这个函数便是为此而生
     2. 参数会传入原有请求的 data 值，并且应当有返回值
 

@@ -10,8 +10,8 @@ module.exports = {
   output: {
     path: __dirname + '/dist',
     filename: 'jquery.seeAjax.js',
-    library: 'jquery.seeAjax',
-    libraryTarget: "umd"
+    library: 'seeAjax',
+    libraryTarget: 'umd'
   },
   module: {
     rules: [
@@ -34,5 +34,19 @@ module.exports = {
 
     ${moment().format('YYYY-MM-DD HH:mm:ss')}
     `)
-  ]
+  ],
+  externals: {
+    jquery : {
+      commonjs: 'jquery',
+      amd: 'jquery',
+      commonjs2: 'jquery',
+      root: 'jQuery'
+    },
+    'json-refactor' : {
+      commonjs: 'json-refactor',
+      amd: 'json-refactor',
+      commonjs2: 'json-refactor',
+      root: 'jsonRefactor'
+    }
+  }
 };

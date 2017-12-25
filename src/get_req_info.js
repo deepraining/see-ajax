@@ -16,10 +16,6 @@ module.exports = (urlName, reqData) => {
      * real name, commonly is the same as urlName
      */
     var name = data.option.name[urlName];
-    
-    if (!name) {
-        logger.throwError(`name '${urlName}' is not defined.`);
-    }
 
     /**
      * current environment index

@@ -2,18 +2,18 @@
  * Created by senntyou on 2017/3/27.
  */
 
-$.seeAjax.config({
-    environment: 0, //环境标识（用于数组选值）：0->服务器环境, 1->本地环境
+seeAjax.config({
+    env: 0, //environment
     name: {
         test: "test",
-        realize: 'realize'
+        implement: 'implement'
     },
     url: {
         test: [
             "a.json",
             "b.json"
         ],
-        realize: [
+        implement: [
             "",
             "b.json"
         ]
@@ -27,7 +27,7 @@ $.seeAjax.config({
                 key1: 'keyb'
             }
         ],
-        realize: [
+        implement: [
             {
                 key1: 'keya'
             },
@@ -73,7 +73,7 @@ $.seeAjax.config({
                 ]
             }
         ],
-        realize: [
+        implement: [
             {
                 data: [
                     {
@@ -119,7 +119,7 @@ $.seeAjax.config({
                 req.test = 1
             }
         ],
-        realize: [
+        implement: [
             function (req) {
                 req.test = 0
             },
@@ -153,7 +153,7 @@ $.seeAjax.config({
                 console.log(req);
             }
         ],
-        realize: [
+        implement: [
             function (res) {
                 res.test = 0
             },
@@ -162,8 +162,8 @@ $.seeAjax.config({
             }
         ]
     },
-    realize: {
-        realize: [
+    implement: {
+        implement: [
             function (data) {
                 return {
                     "result": 1,
@@ -217,7 +217,7 @@ $.seeAjax.get('test', {key1: 'haha'}, function (res) {
     }, !0);
 });
 
-$.seeAjax.get('realize', {key1: 'haha'}, function (res) {
+$.seeAjax.get('implement', {key1: 'haha'}, function (res) {
     console.log('env: 0');
     console.log(res);
 });
