@@ -6,7 +6,7 @@
  * 
  *     @senntyou <jiangjinbelief@163.com>
  * 
- *     2017-12-25 09:24:55
+ *     2017-12-25 11:22:10
  *     
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -195,6 +195,7 @@ module.exports = function (method, urlName, reqData, callback, type, stringify, 
 
 var $ = __webpack_require__(2);
 
+var data = __webpack_require__(0);
 var logger = __webpack_require__(1);
 var getReqInfo = __webpack_require__(9);
 var preHandle = __webpack_require__(10);
@@ -236,6 +237,11 @@ module.exports = function (method, urlName, reqData, callback, type, stringify, 
     var reqInfo = getReqInfo(urlName, reqData);
 
     /**
+     * real request data
+     */
+    var realReqData = reqInfo.reqData;
+
+    /**
      * default response doc type
      */
     !type && (type = 'json');
@@ -243,38 +249,38 @@ module.exports = function (method, urlName, reqData, callback, type, stringify, 
     /**
      * pre handle
      */
-    preHandle(reqInfo.reqData, urlName);
+    preHandle(realReqData, urlName);
 
     /**
      * custom ajax implement function
      *
      * @type {string|Array|implement|{implement}|*}
      */
-    var implement = data.option.implement && data.option.implement[urlName];
+    var implement = data.option.implement && data.option.implement[name];
     if (implement instanceof Array) implement = implement[index];
 
     // custom implement
     if (implement) {
         logger.info('Custom implement ajax for "' + urlName + '", and request data is: ');
-        logger.info(JSON.stringify(reqData));
+        logger.info(JSON.stringify(realReqData));
 
-        var result = implement(!stringify ? reqInfo.reqData : JSON.stringify(reqInfo.reqData));
+        var result = implement(!stringify ? realReqData : JSON.stringify(realReqData));
 
         logger.info('result for "' + urlName + '" is: ');
         logger.info(JSON.stringify(result));
 
-        postHandle(result, reqData, urlName);
+        postHandle(result, realReqData, urlName);
         callback(result);
     } else {
         var options = extraOption || {};
         options.type = method;
-        options.data = !stringify ? reqInfo.reqData : JSON.stringify(reqInfo.reqData);
+        options.data = !stringify ? realReqData : JSON.stringify(realReqData);
         options.dataType = type;
         options.success = function (res) {
             /**
              * post handle
              */
-            postHandle(res, reqData, urlName);
+            postHandle(res, realReqData, urlName);
             callback(res);
         };
         $.ajax(reqInfo.url, options);

@@ -3,6 +3,7 @@
 
 var $ = require('jquery');
 
+var data = require('./data');
 var logger = require('./util/logger');
 var getReqInfo = require('./get_req_info');
 var preHandle = require('./pre_handle');
@@ -44,6 +45,11 @@ module.exports = (method, urlName, reqData, callback, type, stringify, extraOpti
     var reqInfo = getReqInfo(urlName, reqData);
 
     /**
+     * real request data
+     */
+    var realReqData = reqInfo.reqData;
+
+    /**
      * default response doc type
      */
     !type && (type = 'json');
@@ -51,39 +57,39 @@ module.exports = (method, urlName, reqData, callback, type, stringify, extraOpti
     /**
      * pre handle
      */
-    preHandle(reqInfo.reqData, urlName);
+    preHandle(realReqData, urlName);
 
     /**
      * custom ajax implement function
      *
      * @type {string|Array|implement|{implement}|*}
      */
-    var implement = data.option.implement && data.option.implement[urlName];
+    var implement = data.option.implement && data.option.implement[name];
     if (implement instanceof Array) implement = implement[index];
 
     // custom implement
     if (implement) {
         logger.info(`Custom implement ajax for "${urlName}", and request data is: `);
-        logger.info(JSON.stringify(reqData));
+        logger.info(JSON.stringify(realReqData));
 
-        var result = implement(!stringify ? reqInfo.reqData : JSON.stringify(reqInfo.reqData));
+        var result = implement(!stringify ? realReqData : JSON.stringify(realReqData));
 
         logger.info(`result for "${urlName}" is: `);
         logger.info(JSON.stringify(result));
 
-        postHandle(result, reqData, urlName);
+        postHandle(result, realReqData, urlName);
         callback(result);
     }
     else {
         var options = extraOption || {};
         options.type = method;
-        options.data = !stringify ? reqInfo.reqData : JSON.stringify(reqInfo.reqData);
+        options.data = !stringify ? realReqData : JSON.stringify(realReqData);
         options.dataType = type;
         options.success = (res) => {
             /**
              * post handle
              */
-            postHandle(res, reqData, urlName);
+            postHandle(res, realReqData, urlName);
             callback(res);
         };
         $.ajax(reqInfo.url, options);

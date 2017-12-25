@@ -3,18 +3,13 @@
  */
 
 seeAjax.config({
-    env: 0, //environment
+    env: 0,
     name: {
-        test: "test",
-        implement: 'implement'
+        test: "test"
     },
     url: {
         test: [
             "a.json",
-            "b.json"
-        ],
-        implement: [
-            "",
             "b.json"
         ]
     },
@@ -26,54 +21,18 @@ seeAjax.config({
             {
                 key1: 'keyb'
             }
-        ],
-        implement: [
-            {
-                key1: 'keya'
-            },
-            {
-                key1: 'keyb'
-            }
         ]
     },
     responseRefactor: {
         common: [
             {
-                success: 'result!bool'
+                success: 'result|bool'
             },
             {
-                success: 'result!bool'
+                success: 'result|bool'
             }
         ],
         test: [
-            {
-                data: [
-                    {
-                        newId: 'id',
-                        images: 'pics',
-                        _images: [
-                            {
-                                newId: 'id',
-                                newSrc: 'src'
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                data: [
-                    {
-                        images: [
-                            {
-                                newId: 'id',
-                                newSrc: 'src'
-                            }
-                        ]
-                    }
-                ]
-            }
-        ],
-        implement: [
             {
                 data: [
                     {
@@ -118,14 +77,6 @@ seeAjax.config({
             function (req) {
                 req.test = 1
             }
-        ],
-        implement: [
-            function (req) {
-                req.test = 0
-            },
-            function (req) {
-                req.test = 1
-            }
         ]
     },
     postHandle: {
@@ -152,52 +103,6 @@ seeAjax.config({
                 console.log('req:');
                 console.log(req);
             }
-        ],
-        implement: [
-            function (res) {
-                res.test = 0
-            },
-            function (res) {
-                res.test = 1
-            }
-        ]
-    },
-    implement: {
-        implement: [
-            function (data) {
-                return {
-                    "result": 1,
-                    "msg": "success",
-                    "data": [
-                        {
-                            "id": 1,
-                            "pics": [
-                                {
-                                    "id": 1,
-                                    "src": "a.jpg"
-                                },
-                                {
-                                    "id": 2,
-                                    "src": "b.jpg"
-                                }
-                            ]
-                        },
-                        {
-                            "id": 2,
-                            "pics": [
-                                {
-                                    "id": 11,
-                                    "src": "aa.jpg"
-                                },
-                                {
-                                    "id": 22,
-                                    "src": "bb.jpg"
-                                }
-                            ]
-                        }
-                    ]
-                }
-            }
         ]
     }
 });
@@ -207,7 +112,7 @@ $.seeAjax.get('test', {key1: 'haha'}, function (res) {
     console.log(res);
 
     $.seeAjax.config({
-        environment: 1
+        env: 1
     });
     $.seeAjax.post('test', {key1: 'haha'}, function (res) {
         console.log('env: 1');
@@ -217,14 +122,9 @@ $.seeAjax.get('test', {key1: 'haha'}, function (res) {
     }, !0);
 });
 
-$.seeAjax.get('implement', {key1: 'haha'}, function (res) {
-    console.log('env: 0');
-    console.log(res);
-});
-
 function makeTest2() {
     $.seeAjax.config({
-        environment: 0, //环境标识（用于数组选值）：0->服务器环境, 1->本地环境
+        env: 0,
         name: {
             test2: "test2"
         },
@@ -247,10 +147,10 @@ function makeTest2() {
         responseRefactor: {
             common: [
                 {
-                    success: 'result!bool'
+                    success: 'result|bool'
                 },
                 {
-                    success: 'result!bool'
+                    success: 'result|bool'
                 }
             ],
             test2: [
@@ -325,7 +225,7 @@ function makeTest2() {
         console.log(res);
 
         $.seeAjax.config({
-            environment: 1
+            env: 1
         });
         $.seeAjax.delete('test2', {key1: 'haha'}, function (res) {
             console.log('env: 1');
