@@ -1,163 +1,309 @@
-# 一个封装的 jQuery ajax 请求，可以通过配置更新请求参数，前置处理，json序列化，后置处理
+# A wrapped jquery ajax handling, with custom request keys, response refactoring, pre handling, post handling.
 
-## 内置
+## requirements
 
+* [jquery](https://github.com/jquery/jquery)
 * [json-refactor](https://github.com/senntyou/json-refactor)
 
-## 使用
+## quick start
 
-### 1. 加载脚本
-
-```
-<script src="jquery.js"></script>
-<script src="jquery.seeAjax.js"></script>
-```
-
-### 2. 加载配置
+### 1. load resources
 
 ```
-$.seeAjax.config(config);
+var seeAjax = require('jquery.seeAjax');
+seeAjax.doSomething
+
+// or
+ var $ = require('jquery');
+$.seeAjax.doSomething
 ```
 
-示例配置
+or load scripts directly
+
+```
+<script src="path/to/jquery"></script>
+<script src="path/to/json-refactor"></script>
+<script src="path/to/jquery.seeAjax"></script>
+<script>
+seeAjax.doSomething
+// or
+$.seeAjax.doSomething
+</script>
+```
+
+### 2. config current application's options'
+
+```
+seeAjax.config({...});
+```
+
+### 3. use
+
+```
+seeAjax.get(urlName, reqData, callback);
+```
+
+## config options
+
+example: 
 
 ```
 {
-    environment: 0, //环境标识（用于数组选值）：0->服务器环境, 1->本地环境
-    name: {
-        test: "test"
-    },
-    url: {
-        test: [
-            "a.json",
-            "b.json"
-        ]
-    },
-    requestKeys: {
-        test: [
-            {
-                key1: 'keya'
-            },
-            {
-                key1: 'keyb'
-            }
-        ]
-    },
-    responseRefactor: {
-        common: [
-            {
-                success: 'result!bool'
-            },
-            {
-                success: 'result!bool'
-            }
-        ],
-        test: [
-            {
-                data: [
-                    {
-                        newId: 'id',
-                        images: 'pics',
-                        _images: [
-                            {
-                                newId: 'id',
-                                newSrc: 'src'
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                data: [
-                    {
-                        images: [
-                            {
-                                newId: 'id',
-                                newSrc: 'src'
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    },
-    preHandle: {
-        common: [
-            function (req) {
-                req.common = 0
-            },
-            function (req) {
-                req.common = 1
-            }
-        ],
-        test: [
-            function (req) {
-                req.test = 0
-            },
-            function (req) {
-                req.test = 1
-            }
-        ]
-    },
-    postHandle: {
-        common: [
-            function (res, req) {
-                res.common = 0
-            },
-            function (res, req) {
-                res.common = 1
-            }
-        ],
-        test: [
-            function (res, req) {
-                res.test = 0
-            },
-            function (res, req) {
-                res.test = 1
-            }
-        ]
-    },
-    implement: {
-        test: [
-            function (req) {
-                var result = {test: 0};
-                return result;
-            },
-            function (req) {
-                var result = {test: 1};
-                return result;
-            }
-        ]
-    }
+    env: 0/1/2/3, // environment
+    name: {...},
+    url: {...},
+    requestKeys: {...},
+    responseRefactor: {...},
+    preHandle: {...},
+    postHandle: {...},
+    implement: {...}
 }
 ```
 
-配置说明
+### env
 
-* environment: 主要用来辨识环境索引，一般来说，后面的配置项都会使用数组的形式
-* name: 用来标示一个请求
-* url: 请求的地址，每一个值都必须是数组
-* requestKeys: 请求的参数名，必须是数组。如果数组元素也是数组，则在请求的时候传入的data值也必须是数组，并且顺序需要一一对应；如果是map，则在请求的时候传入的data值也必须是map。
-* responseRefactor: 针对返回的json数据做重构。[json-refactor](https://github.com/senntyou/json-refactor)（common是保留字段，会应用在每一个返回上）
-* preHandle: 请求预处理。针对请求做更多的动态处理。（common是保留字段，会应用在每一个返回上）
-* postHandle: 请求后置处理。针对返回的数据做更多的动态处理，在json重构之后执行。（common是保留字段，会应用在每一个返回上）
-* 执行流程：url -> requestKeys -> preHandle(common) -> preHandle(specified) -> responseRefactor -> postHandle(common) -> postHandle(specified)
-* implement: 自定义实现返回数据，代替ajax
-    1. 在前后端分离，并行开发的过程中，或为了加快响应速度，有可能是以模板字符串的形式返回到前端，这个函数便是为此而生
-    2. 参数会传入原有请求的 data 值，并且应当有返回值
+environment index, used to select a element of an array within `url`, `requestKeys`, `responseRefactor`, `preHandle`, `postHandle`, `implement`
 
-### 3. 方法
+### name
 
-* $.seeAjax.config(config) 配置（可多次配置）
-* $.seeAjax.getEnv() 获取当前的环境值
-* $.seeAjax.get(url, data, callback[, type][, extraOptions]) get请求
-* $.seeAjax.post(url, data, callback[, type][, stringify][, extraOptions]) post请求
-* $.seeAjax.put(url, data, callback[, type][, stringify][, extraOptions]) put请求
-* $.seeAjax.delete(url, data, callback[, type][, stringify][, extraOptions]) delete请求
+url name mapping, used to get values of `url`, `requestKeys`, `responseRefactor`, `preHandle`, `postHandle`, `implement`
 
-说明：
+```
+name: {
+    exportName: 'inlineName'
+}
 
-* url：索引值或者键名（字符串），取决于配置
-* data：数组或者map，取决于配置
-* stringify：是否序列化请求参数
-* extraOptions：其他需要的 jQuery ajax 配置参数
+url: {inlineName: []}
+requestKeys: {inlineName: []}
+responseRefactor: {inlineName: []}
+preHandle: {inlineName: []}
+postHandle: {inlineName: []}
+implement: {inlineName: []}
+```
+
+### url
+
+url to request data
+
+```
+url: {inlineName: [
+    'url1', //env: 0
+    'url2', //env: 1
+    'url3', //env: 2
+]}
+
+// or
+url: {
+    // all environments will use this url
+    inlineName: 'url'
+}
+```
+
+### requestKeys
+
+request keys mapping
+
+```
+requestKeys: {inlineName: [
+    {exportKey: 'realKey'}, // env: 0
+    {exportKey: 'realKey'}, // env: 1
+    {exportKey: 'realKey'}, // env: 2
+]}
+
+// or
+requestKeys: {
+    // all environments will use this map
+    inlineName: {exportKey: 'realKey'}
+}
+```
+
+### responseRefactor
+
+refactor response data, after ajax responding
+
+```
+responseRefactor: {
+    common: []/{}, // common is system reserved keywork, this will apply to all environments
+    inlineName: [
+        {... refactor map ...}, // env: 0
+        {... refactor map ...}, // env: 1
+        {... refactor map ...}, // env: 2
+    ]
+}
+
+// or 
+responseRefactor: {
+    // all environments will use this map
+    inlineName: {... refactor map ...}
+}
+```
+
+* `refactor map`: see [json-refactor](https://github.com/senntyou/json-refactor)
+
+### preHandle
+
+more handling after `requestKeys`, before ajax sending
+
+```
+preHandle: {
+    common: (reqData) => {... do something .. }, // common is system reserved keywork, this will apply to all environments
+    inlineName: [
+        (reqData) => {... do something .. }, // env: 0
+        (reqData) => {... do something .. }, // env: 1
+        (reqData) => {... do something .. }, // env: 2
+    ]
+}
+
+// or 
+preHandle: {
+    // all environments will use this hanlder
+    inlineName: (reqData) => {... do something .. }
+}
+```
+
+### postHandle
+
+more handling after `responseRefactor`
+
+```
+postHandle: {
+    common: (res, reqData, urlName) => {... do something .. }, // common is system reserved keywork, this will apply to all environments
+    inlineName: [
+        (res, reqData, urlName) => {... do something .. }, // env: 0
+        (res, reqData, urlName) => {... do something .. }, // env: 1
+        (res, reqData, urlName) => {... do something .. }, // env: 2
+    ]
+}
+
+// or 
+postHandle: {
+    // all environments will use this hanlder
+    inlineName: (res, reqData, urlName) => {... do something .. }
+}
+```
+
+### implement
+
+custom implement instead of ajax.
+ 
+sometimes, you have not to use ajax, but other ways, for some reasons, this is what you want.
+
+```
+implement: {
+    inlineName: [
+        (res, reqData, urlName) => {... do something .. }, // env: 0
+        (res, reqData, urlName) => {... do something .. }, // env: 1
+        (res, reqData, urlName) => {... do something .. }, // env: 2
+    ]
+}
+
+// or 
+implement: {
+    // all environments will use this hanlder
+    inlineName: (res, reqData, urlName) => {... do something .. }
+}
+```
+
+* `note`: every function should return a value, like ajax response
+
+## api
+
+### config
+
+config options of current application
+
+```
+seeAjax.config({ ... });
+```
+
+### getEnv
+
+get current environment
+
+```
+var env = seeAjax.getEnv(); // 0/1/2/3
+```
+
+### get
+
+make a `GET` request
+
+```
+seeAjax.get(urlName, reqData, callback)
+seeAjax.get(urlName, reqData, callback, type)
+seeAjax.get(urlName, reqData, callback, extraOptions)
+seeAjax.get(urlName, reqData, callback, type, extraOptions)
+```
+
+### post
+
+make a `POST` request
+
+```
+seeAjax.post(urlName, reqData, callback)
+seeAjax.post(urlName, reqData, callback, type)
+seeAjax.post(urlName, reqData, callback, stringify)
+seeAjax.post(urlName, reqData, callback, extraOptions)
+seeAjax.post(urlName, reqData, callback, type, extraOptions)
+seeAjax.post(urlName, reqData, callback, stringify, extraOptions)
+seeAjax.post(urlName, reqData, callback, type, stringify, extraOptions)
+```
+
+### put 
+
+make a `PUT` request, this needs browser's supporting.
+
+```
+// like post
+```
+
+### delete 
+
+make a `DELETE` request, this needs browser's supporting.
+
+```
+// like post
+```
+
+## `get/post/put/delete` arguments
+
+### urlName
+
+export url name, refer to `option.name`
+
+### reqData
+
+request data, refer to [https://api.jquery.com/jQuery.ajax/](https://api.jquery.com/jQuery.ajax/)
+
+### callback
+
+success callback, refer to [https://api.jquery.com/jQuery.ajax/](https://api.jquery.com/jQuery.ajax/)
+
+### type
+
+response data type, default is `json`, refer to [https://api.jquery.com/jQuery.ajax/](https://api.jquery.com/jQuery.ajax/)
+
+### stringify
+
+whether stringify request data, default is `false`, and request will use `application/x-www-form-urlencoded`.
+if `true`, request will use a string in the body.
+
+### extraOptions
+
+extra more ajax options, refer to [https://api.jquery.com/jQuery.ajax/](https://api.jquery.com/jQuery.ajax/)
+
+## handlers sequences while processing
+
+1. `url`: get real url
+2. `requestKeys`:  get real request data
+3. `preHandle`: more handling before send a request
+    1. `common`: common handling, if have
+    2. `yourName`: named handling
+4. `implement`: if have, return a custom response data, and will not send an ajax
+5. `responseRefactor`: refactoring response data
+    1. `common`: common handling, if have
+    2. `yourName`: named handling
+6. `postHandle`: more handling after refactoring response data
+    1. `common`: common handling, if have
+    2. `yourName`: named handling
+    
