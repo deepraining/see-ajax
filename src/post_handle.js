@@ -1,7 +1,7 @@
 
 'use strict';
 
-var jsonRefactor = require('json-refactor');
+var JSONRefactor = require('json-refactor');
 
 var data = require('./data');
 var logger = require('./util/logger');
@@ -57,8 +57,8 @@ module.exports = (res, reqData, urlName) => {
     if (commonHandle instanceof Array) commonHandle = commonHandle[index];
     if (namedHandle instanceof Array) namedHandle = namedHandle[index];
 
-    commonRefactor && typeof commonRefactor == 'object' && jsonRefactor(res, commonRefactor);
-    namedRefactor && typeof namedRefactor == 'object' && jsonRefactor(res, namedRefactor);
+    commonRefactor && typeof commonRefactor == 'object' && JSONRefactor(res, commonRefactor);
+    namedRefactor && typeof namedRefactor == 'object' && JSONRefactor(res, namedRefactor);
     typeof commonHandle == 'function' && commonHandle(res, reqData, urlName);
     typeof namedHandle == 'function' && namedHandle(res, reqData, urlName);
 };

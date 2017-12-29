@@ -1,12 +1,12 @@
 /*!
  * 
- *     jquery.seeAjax v0.1.0
+ *     jquery.seeAjax v0.1.1
  * 
  *     https://github.com/senntyou/jquery.seeAjax
  * 
  *     @senntyou <jiangjinbelief@163.com>
  * 
- *     2017-12-25 11:22:10
+ *     2017-12-29 20:22:21
  *     
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -17,7 +17,7 @@
 	else if(typeof exports === 'object')
 		exports["seeAjax"] = factory(require("jquery"), require("json-refactor"));
 	else
-		root["seeAjax"] = factory(root["jQuery"], root["jsonRefactor"]);
+		root["seeAjax"] = factory(root["jQuery"], root["JSONRefactor"]);
 })(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_12__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -497,7 +497,7 @@ module.exports = function (reqData, urlName) {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var jsonRefactor = __webpack_require__(12);
+var JSONRefactor = __webpack_require__(12);
 
 var data = __webpack_require__(0);
 var logger = __webpack_require__(1);
@@ -553,8 +553,8 @@ module.exports = function (res, reqData, urlName) {
   if (commonHandle instanceof Array) commonHandle = commonHandle[index];
   if (namedHandle instanceof Array) namedHandle = namedHandle[index];
 
-  commonRefactor && (typeof commonRefactor === 'undefined' ? 'undefined' : _typeof(commonRefactor)) == 'object' && jsonRefactor(res, commonRefactor);
-  namedRefactor && (typeof namedRefactor === 'undefined' ? 'undefined' : _typeof(namedRefactor)) == 'object' && jsonRefactor(res, namedRefactor);
+  commonRefactor && (typeof commonRefactor === 'undefined' ? 'undefined' : _typeof(commonRefactor)) == 'object' && JSONRefactor(res, commonRefactor);
+  namedRefactor && (typeof namedRefactor === 'undefined' ? 'undefined' : _typeof(namedRefactor)) == 'object' && JSONRefactor(res, namedRefactor);
   typeof commonHandle == 'function' && commonHandle(res, reqData, urlName);
   typeof namedHandle == 'function' && namedHandle(res, reqData, urlName);
 };

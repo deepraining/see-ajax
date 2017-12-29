@@ -46,7 +46,7 @@ module.exports = {
       commonjs: 'json-refactor',
       amd: 'json-refactor',
       commonjs2: 'json-refactor',
-      root: 'jsonRefactor'
+      root: 'JSONRefactor'
     }
   }
 };
