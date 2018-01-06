@@ -1,12 +1,12 @@
 /*!
  * 
- *     jquery.seeAjax v0.1.1
+ *     jquery.seeAjax v0.1.2
  * 
  *     https://github.com/senntyou/jquery.seeAjax
  * 
  *     @senntyou <jiangjinbelief@163.com>
  * 
- *     2017-12-29 20:22:21
+ *     2018-01-06 18:12:50
  *     
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -18,7 +18,7 @@
 		exports["seeAjax"] = factory(require("jquery"), require("json-refactor"));
 	else
 		root["seeAjax"] = factory(root["jQuery"], root["JSONRefactor"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_12__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_12__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -81,7 +81,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -129,12 +129,6 @@ module.exports = {
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
-
-/***/ }),
-/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -143,61 +137,12 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var send = __webpack_require__(4);
-
-/**
- * METHOD POST, PUT, DELETE, ...
- *
- * @param method
- * @param urlName
- * @param reqData
- * @param callback
- * @param type
- * @param stringify
- * @param extraOptions
- */
-module.exports = function (method, urlName, reqData, callback, type, stringify, extraOptions) {
-    if (typeof type == 'boolean') {
-        /**
-         * (method, urlName, reqData, callback, stringify, extraOptions)
-         */
-        if ((typeof stringify === 'undefined' ? 'undefined' : _typeof(stringify)) == 'object') {
-            extraOptions = stringify;
-            stringify = type;
-            type = void 0;
-        }
-        /**
-         * (method, urlName, reqData, callback, stringify)
-         */
-        else {
-                stringify = type;
-                type = void 0;
-            }
-    }
-    /**
-     * (method, urlName, reqData, callback, extraOptions)
-     */
-    else if ((typeof type === 'undefined' ? 'undefined' : _typeof(type)) == 'object') {
-            extraOptions = type;
-            type = void 0;
-            stringify = void 0;
-        }
-    send(method, urlName, reqData, callback, type, stringify, extraOptions);
-};
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-
-var $ = __webpack_require__(2);
+var $ = __webpack_require__(3);
 
 var data = __webpack_require__(0);
 var logger = __webpack_require__(1);
-var getReqInfo = __webpack_require__(9);
+var getReqInfo = __webpack_require__(8);
+var getCustomMethod = __webpack_require__(9);
 var preHandle = __webpack_require__(10);
 var postHandle = __webpack_require__(11);
 
@@ -208,11 +153,25 @@ var postHandle = __webpack_require__(11);
  * @param urlName Request url name
  * @param reqData Request data
  * @param callback Success callback
- * @param type Response data type
  * @param stringify Whether stringify request data
- * @param extraOption Extra jquery ajax option
+ * @param extraOptions Extra jquery ajax option
  */
-module.exports = function (method, urlName, reqData, callback, type, stringify, extraOption) {
+module.exports = function (method, urlName, reqData, callback, stringify, extraOptions) {
+
+    /**
+     * (method, urlName, reqData, callback, extraOptions)
+     */
+    if ((typeof stringify === 'undefined' ? 'undefined' : _typeof(stringify)) == 'object') {
+        extraOptions = stringify;
+        stringify = void 0;
+    }
+
+    /**
+     * check if have custom method
+     */
+    var customMethod = getCustomMethod(urlName);
+
+    customMethod && (method = customMethod);
 
     /**
      * real name, commonly is the same as urlName
@@ -242,11 +201,6 @@ module.exports = function (method, urlName, reqData, callback, type, stringify, 
     var realReqData = reqInfo.reqData;
 
     /**
-     * default response doc type
-     */
-    !type && (type = 'json');
-
-    /**
      * pre handle
      */
     preHandle(realReqData, urlName);
@@ -272,10 +226,14 @@ module.exports = function (method, urlName, reqData, callback, type, stringify, 
         postHandle(result, realReqData, urlName);
         callback(result);
     } else {
-        var options = extraOption || {};
+        var options = extraOptions || {};
         options.type = method;
-        options.data = !stringify ? realReqData : JSON.stringify(realReqData);
-        options.dataType = type;
+
+        // if get method, do not stringify
+        options.data = stringify && method != 'get' ? JSON.stringify(realReqData) : realReqData;
+
+        // default dataType: json
+        !options.dataType && (options.dataType = 'json');
         options.success = function (res) {
             /**
              * post handle
@@ -288,18 +246,24 @@ module.exports = function (method, urlName, reqData, callback, type, stringify, 
 };
 
 /***/ }),
-/* 5 */
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 
-var $ = __webpack_require__(2);
+var $ = __webpack_require__(3);
 
-var config = __webpack_require__(6);
-var getEnv = __webpack_require__(7);
-var getMethod = __webpack_require__(8);
+var config = __webpack_require__(5);
+var getEnv = __webpack_require__(6);
+var getMethod = __webpack_require__(7);
 var postMethod = __webpack_require__(13);
 var putMethod = __webpack_require__(14);
 var deleteMethod = __webpack_require__(15);
@@ -318,14 +282,14 @@ $.seeAjax = request;
 module.exports = request;
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 
-var $ = __webpack_require__(2);
+var $ = __webpack_require__(3);
 
 var data = __webpack_require__(0);
 
@@ -339,7 +303,7 @@ module.exports = function (option) {
 };
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -358,16 +322,14 @@ module.exports = function () {
 };
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var send = __webpack_require__(4);
+var send = __webpack_require__(2);
 
 /**
  * METHOD get
@@ -375,23 +337,15 @@ var send = __webpack_require__(4);
  * @param urlName
  * @param reqData
  * @param callback
- * @param type
+ * @param stringify
  * @param extraOptions
  */
-module.exports = function (urlName, reqData, callback, type, extraOptions) {
-    /**
-     * (urlName, reqData, callback, extraOptions)
-     */
-    if ((typeof type === 'undefined' ? 'undefined' : _typeof(type)) == 'object') {
-        extraOptions = type;
-        type = void 0;
-    }
-
-    send('get', urlName, reqData, callback, type, !1, extraOptions);
+module.exports = function (urlName, reqData, callback, stringify, extraOptions) {
+  send('get', urlName, reqData, callback, stringify, extraOptions);
 };
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -435,6 +389,41 @@ module.exports = function (urlName, reqData) {
         url: data.option.url[name][index],
         reqData: normalizedReqData
     };
+};
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+
+var data = __webpack_require__(0);
+var logger = __webpack_require__(1);
+
+/**
+ * get normalized request data
+ *
+ * @param urlName Url name
+ */
+module.exports = function (urlName) {
+    /**
+     * custom methods
+     */
+    var method = data.option.method && data.option.method[urlName];
+
+    /**
+     * current environment index
+     * @type {Object.<string, *>|null|*}
+     */
+    var index = data.option.env;
+
+    if (method instanceof Array) method = method[index];
+
+    method && (method = method.toLowerCase());
+
+    return method;
 };
 
 /***/ }),
@@ -573,7 +562,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_12__;
 
 
 
-var beyondGet = __webpack_require__(3);
+var send = __webpack_require__(2);
 
 /**
  * METHOD post
@@ -581,12 +570,11 @@ var beyondGet = __webpack_require__(3);
  * @param urlName
  * @param reqData
  * @param callback
- * @param type
  * @param stringify
  * @param extraOptions
  */
-module.exports = function (urlName, reqData, callback, type, stringify, extraOptions) {
-  beyondGet('post', urlName, reqData, callback, type, stringify, extraOptions);
+module.exports = function (urlName, reqData, callback, stringify, extraOptions) {
+  send('post', urlName, reqData, callback, stringify, extraOptions);
 };
 
 /***/ }),
@@ -597,7 +585,7 @@ module.exports = function (urlName, reqData, callback, type, stringify, extraOpt
 
 
 
-var beyondGet = __webpack_require__(3);
+var send = __webpack_require__(2);
 
 /**
  * METHOD put
@@ -605,12 +593,11 @@ var beyondGet = __webpack_require__(3);
  * @param urlName
  * @param reqData
  * @param callback
- * @param type
  * @param stringify
  * @param extraOptions
  */
-module.exports = function (urlName, reqData, callback, type, stringify, extraOptions) {
-  beyondGet('put', urlName, reqData, callback, type, stringify, extraOptions);
+module.exports = function (urlName, reqData, callback, stringify, extraOptions) {
+  send('put', urlName, reqData, callback, stringify, extraOptions);
 };
 
 /***/ }),
@@ -621,7 +608,7 @@ module.exports = function (urlName, reqData, callback, type, stringify, extraOpt
 
 
 
-var beyondGet = __webpack_require__(3);
+var send = __webpack_require__(2);
 
 /**
  * METHOD delete
@@ -629,12 +616,11 @@ var beyondGet = __webpack_require__(3);
  * @param urlName
  * @param reqData
  * @param callback
- * @param type
  * @param stringify
  * @param extraOptions
  */
-module.exports = function (urlName, reqData, callback, type, stringify, extraOptions) {
-  beyondGet('delete', urlName, reqData, callback, type, stringify, extraOptions);
+module.exports = function (urlName, reqData, callback, stringify, extraOptions) {
+  send('delete', urlName, reqData, callback, stringify, extraOptions);
 };
 
 /***/ })

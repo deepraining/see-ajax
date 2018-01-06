@@ -6,6 +6,7 @@ var $ = require('jquery');
 var data = require('./data');
 var logger = require('./util/logger');
 var getReqInfo = require('./get_req_info');
+var getCustomMethod = require('./get_custom_method');
 var preHandle = require('./pre_handle');
 var postHandle = require('./post_handle');
 
@@ -16,11 +17,25 @@ var postHandle = require('./post_handle');
  * @param urlName Request url name
  * @param reqData Request data
  * @param callback Success callback
- * @param type Response data type
  * @param stringify Whether stringify request data
- * @param extraOption Extra jquery ajax option
+ * @param extraOptions Extra jquery ajax option
  */
-module.exports = (method, urlName, reqData, callback, type, stringify, extraOption) => {
+module.exports = (method, urlName, reqData, callback, stringify, extraOptions) => {
+
+    /**
+     * (method, urlName, reqData, callback, extraOptions)
+     */
+    if (typeof stringify == 'object') {
+        extraOptions = stringify;
+        stringify = void 0;
+    }
+
+    /**
+     * check if have custom method
+     */
+    var customMethod = getCustomMethod(urlName);
+
+    customMethod && (method = customMethod);
 
     /**
      * real name, commonly is the same as urlName
@@ -50,11 +65,6 @@ module.exports = (method, urlName, reqData, callback, type, stringify, extraOpti
     var realReqData = reqInfo.reqData;
 
     /**
-     * default response doc type
-     */
-    !type && (type = 'json');
-
-    /**
      * pre handle
      */
     preHandle(realReqData, urlName);
@@ -81,10 +91,14 @@ module.exports = (method, urlName, reqData, callback, type, stringify, extraOpti
         callback(result);
     }
     else {
-        var options = extraOption || {};
+        var options = extraOptions || {};
         options.type = method;
-        options.data = !stringify ? realReqData : JSON.stringify(realReqData);
-        options.dataType = type;
+
+        // if get method, do not stringify
+        options.data = stringify && method != 'get' ? JSON.stringify(realReqData) : realReqData;
+
+        // default dataType: json
+        !options.dataType && (options.dataType = 'json');
         options.success = (res) => {
             /**
              * post handle

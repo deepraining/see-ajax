@@ -1,7 +1,7 @@
 
 'use strict';
 
-var beyondGet = require('./beyond_get');
+var send = require('../send');
 
 /**
  * METHOD post
@@ -9,10 +9,9 @@ var beyondGet = require('./beyond_get');
  * @param urlName
  * @param reqData
  * @param callback
- * @param type
  * @param stringify
  * @param extraOptions
  */
-module.exports = (urlName, reqData, callback, type, stringify, extraOptions) => {
-    beyondGet('post', urlName, reqData, callback, type, stringify, extraOptions);
+module.exports = (urlName, reqData, callback, stringify, extraOptions) => {
+    send('post', urlName, reqData, callback, stringify, extraOptions);
 };

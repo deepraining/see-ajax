@@ -56,17 +56,18 @@ example:
     responseRefactor: {...},
     preHandle: {...},
     postHandle: {...},
-    implement: {...}
+    implement: {...},
+    method: {...}
 }
 ```
 
 ### env
 
-environment index, used to select a element of an array within `url`, `requestKeys`, `responseRefactor`, `preHandle`, `postHandle`, `implement`
+environment index, used to select a element of an array within `url`, `requestKeys`, `responseRefactor`, `preHandle`, `postHandle`, `implement`, `method`
 
 ### name
 
-url name mapping, used to get values of `url`, `requestKeys`, `responseRefactor`, `preHandle`, `postHandle`, `implement`
+url name mapping, used to get values of `url`, `requestKeys`, `responseRefactor`, `preHandle`, `postHandle`, `implement`, `method`
 
 ```
 name: {
@@ -79,6 +80,7 @@ responseRefactor: {inlineName: []}
 preHandle: {inlineName: []}
 postHandle: {inlineName: []}
 implement: {inlineName: []}
+method: {inlineName: []}
 ```
 
 ### url
@@ -206,6 +208,26 @@ implement: {
 
 * `note`: every function should return a value, like ajax response
 
+### method
+
+take a different http method to a special environment.
+
+sometimes, you want to use different http method of different environment, especially `PUT, DELETE`, you may be in trouble when debug locally.
+and this is to resolve that problem, you may use `GET` in local, and use `PUT` in server.
+
+```
+method: {
+    inlineName: [
+        'delete', // env: 0, use DELETE
+        'put', // env: 1, use PUT
+        'post'// env: 2, use POST
+        // other env, keep GET
+    ]
+}
+
+seeAjax.get('inlineName', ...);
+```
+
 ## api
 
 ### config
@@ -230,9 +252,9 @@ make a `GET` request
 
 ```
 seeAjax.get(urlName, reqData, callback)
-seeAjax.get(urlName, reqData, callback, type)
+seeAjax.get(urlName, reqData, callback, stringify)
 seeAjax.get(urlName, reqData, callback, extraOptions)
-seeAjax.get(urlName, reqData, callback, type, extraOptions)
+seeAjax.get(urlName, reqData, callback, stringify, extraOptions)
 ```
 
 ### post
@@ -240,13 +262,7 @@ seeAjax.get(urlName, reqData, callback, type, extraOptions)
 make a `POST` request
 
 ```
-seeAjax.post(urlName, reqData, callback)
-seeAjax.post(urlName, reqData, callback, type)
-seeAjax.post(urlName, reqData, callback, stringify)
-seeAjax.post(urlName, reqData, callback, extraOptions)
-seeAjax.post(urlName, reqData, callback, type, extraOptions)
-seeAjax.post(urlName, reqData, callback, stringify, extraOptions)
-seeAjax.post(urlName, reqData, callback, type, stringify, extraOptions)
+// like get
 ```
 
 ### put 
@@ -254,7 +270,7 @@ seeAjax.post(urlName, reqData, callback, type, stringify, extraOptions)
 make a `PUT` request, this needs browser's supporting.
 
 ```
-// like post
+// like get
 ```
 
 ### delete 
@@ -262,7 +278,7 @@ make a `PUT` request, this needs browser's supporting.
 make a `DELETE` request, this needs browser's supporting.
 
 ```
-// like post
+// like get
 ```
 
 ## `get/post/put/delete` arguments
@@ -279,14 +295,12 @@ request data, refer to [https://api.jquery.com/jQuery.ajax/](https://api.jquery.
 
 success callback, refer to [https://api.jquery.com/jQuery.ajax/](https://api.jquery.com/jQuery.ajax/)
 
-### type
-
-response data type, default is `json`, refer to [https://api.jquery.com/jQuery.ajax/](https://api.jquery.com/jQuery.ajax/)
-
 ### stringify
 
 whether stringify request data, default is `false`, and request will use `application/x-www-form-urlencoded`.
 if `true`, request will use a string in the body.
+
+* note: if `GET` method, request data will always not be stringify.
 
 ### extraOptions
 
@@ -300,10 +314,11 @@ extra more ajax options, refer to [https://api.jquery.com/jQuery.ajax/](https://
     1. `common`: common handling, if have
     2. `yourName`: named handling
 4. `implement`: if have, return a custom response data, and will not send an ajax
-5. `responseRefactor`: refactoring response data
+5. `method`: check if has a different http method of current environment
+6. `responseRefactor`: refactoring response data
     1. `common`: common handling, if have
     2. `yourName`: named handling
-6. `postHandle`: more handling after refactoring response data
+7. `postHandle`: more handling after refactoring response data
     1. `common`: common handling, if have
     2. `yourName`: named handling
     

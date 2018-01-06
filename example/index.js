@@ -217,6 +217,12 @@ function makeTest2() {
                     res.test2 = 1
                 }
             ]
+        },
+        method: {
+            test2: [
+                'get',
+                'post'
+            ]
         }
     });
 
