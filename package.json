@@ -1,6 +1,6 @@
 {
   "name": "see-ajax",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "A wrapped jquery ajax handling, with custom request keys, response refactoring, pre handling, post handling.",
   "homepage": "https://github.com/senntyou/jquery.seeAjax",
   "author": "senntyou",

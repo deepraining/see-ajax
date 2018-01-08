@@ -11,54 +11,28 @@ var logger = require('./util/logger');
  *
  * @param res Response data
  * @param reqData Request data
- * @param urlName Url name
+ * @param name Name
  */
-module.exports = (res, reqData, urlName) => {
+module.exports = (res, reqData, name) => {
 
-    /**
-     * real name, commonly is the same as urlName
-     */
-    var name = data.option.name[urlName];
+    // current option
+    var option = data.options[name];
+    // common option
+    var commonOption = data.options['common'] || {};
 
-    /**
-     * current environment index
-     * @type {Object.<string, *>|null|*}
-     */
-    var index = data.option.env;
+    // index to select item
+    var index = data.env;
 
-    /**
-     * common refactor
-     *
-     * @type {responseRefactor|{common, test, implement}|{common, test2}|Array}
-     */
-    var commonRefactor = data.option.responseRefactor && data.option.responseRefactor.common;
-    /**
-     * named refactor
-     *
-     * @type {responseRefactor|{common, test, implement}|{common, test2}|*}
-     */
-    var namedRefactor = data.option.responseRefactor && data.option.responseRefactor[name];
+    // response refactor
+    var responseRefactor = option.responseRefactor && option.responseRefactor[index];
+    var commonResponseRefactor = commonOption.responseRefactor && commonOption.responseRefactor[index];
 
-    /**
-     * common handler
-     *
-     * @type {postHandle|{common, test, implement}|{common, test2}|Array}
-     */
-    var commonHandle = data.option.postHandle && data.option.postHandle.common;
-    /**
-     * named handler
-     *
-     * @type {postHandle|{common, test, implement}|{common, test2}|*}
-     */
-    var namedHandle = data.option.postHandle && data.option.postHandle[name];
+    // post handle
+    var postHandle = option.postHandle && option.postHandle[index];
+    var commonPostHandle = commonOption.postHandle && commonOption.postHandle[index];
 
-    if (commonRefactor instanceof Array) commonRefactor = commonRefactor[index];
-    if (namedRefactor instanceof Array) namedRefactor = namedRefactor[index];
-    if (commonHandle instanceof Array) commonHandle = commonHandle[index];
-    if (namedHandle instanceof Array) namedHandle = namedHandle[index];
-
-    commonRefactor && typeof commonRefactor == 'object' && JSONRefactor(res, commonRefactor);
-    namedRefactor && typeof namedRefactor == 'object' && JSONRefactor(res, namedRefactor);
-    typeof commonHandle == 'function' && commonHandle(res, reqData, urlName);
-    typeof namedHandle == 'function' && namedHandle(res, reqData, urlName);
+    commonResponseRefactor && JSONRefactor(res, commonResponseRefactor);
+    responseRefactor && JSONRefactor(res, responseRefactor);
+    commonPostHandle && commonPostHandle(res, reqData, name);
+    postHandle && postHandle(res, reqData, name);
 };

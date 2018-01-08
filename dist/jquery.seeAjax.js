@@ -1,12 +1,12 @@
 /*!
  * 
- *     jquery.seeAjax v0.1.2
+ *     jquery.seeAjax v0.2.0
  * 
  *     https://github.com/senntyou/jquery.seeAjax
  * 
  *     @senntyou <jiangjinbelief@163.com>
  * 
- *     2018-01-06 18:12:50
+ *     2018-01-08 10:29:37
  *     
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -18,7 +18,7 @@
 		exports["seeAjax"] = factory(require("jquery"), require("json-refactor"));
 	else
 		root["seeAjax"] = factory(root["jQuery"], root["JSONRefactor"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_12__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_9__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -81,7 +81,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -93,14 +93,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 module.exports = {
-    option: {
-        // default environment is 0
-        env: 0
-    }
+    // application options
+    options: {},
+    // environment, default is 0
+    env: 0
 };
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -128,128 +134,29 @@ module.exports = {
 };
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var $ = __webpack_require__(1);
 
-var $ = __webpack_require__(3);
+var config = __webpack_require__(4);
+var setEnv = __webpack_require__(5);
+var getEnv = __webpack_require__(6);
+var send = __webpack_require__(7);
 
-var data = __webpack_require__(0);
-var logger = __webpack_require__(1);
-var getReqInfo = __webpack_require__(8);
-var getCustomMethod = __webpack_require__(9);
-var preHandle = __webpack_require__(10);
-var postHandle = __webpack_require__(11);
+var seeAjax = send;
 
-/**
- * send a request
- *
- * @param method Request Method, like GET, POST, PUT, DELETE, OPTION
- * @param urlName Request url name
- * @param reqData Request data
- * @param callback Success callback
- * @param stringify Whether stringify request data
- * @param extraOptions Extra jquery ajax option
- */
-module.exports = function (method, urlName, reqData, callback, stringify, extraOptions) {
+seeAjax.config = config;
+seeAjax.setEnv = setEnv;
+seeAjax.getEnv = getEnv;
 
-    /**
-     * (method, urlName, reqData, callback, extraOptions)
-     */
-    if ((typeof stringify === 'undefined' ? 'undefined' : _typeof(stringify)) == 'object') {
-        extraOptions = stringify;
-        stringify = void 0;
-    }
+$.seeAjax = seeAjax;
 
-    /**
-     * check if have custom method
-     */
-    var customMethod = getCustomMethod(urlName);
-
-    customMethod && (method = customMethod);
-
-    /**
-     * real name, commonly is the same as urlName
-     */
-    var name = data.option.name[urlName];
-
-    /**
-     * current environment index
-     * @type {Object.<string, *>|null|*}
-     */
-    var index = data.option.env;
-
-    if (!name) {
-        logger.throwError('name \'' + urlName + '\' is not defined.');
-        return;
-    }
-
-    /**
-     * request info
-     * @type {{url, reqData}|{}|*}
-     */
-    var reqInfo = getReqInfo(urlName, reqData);
-
-    /**
-     * real request data
-     */
-    var realReqData = reqInfo.reqData;
-
-    /**
-     * pre handle
-     */
-    preHandle(realReqData, urlName);
-
-    /**
-     * custom ajax implement function
-     *
-     * @type {string|Array|implement|{implement}|*}
-     */
-    var implement = data.option.implement && data.option.implement[name];
-    if (implement instanceof Array) implement = implement[index];
-
-    // custom implement
-    if (implement) {
-        logger.info('Custom implement ajax for "' + urlName + '", and request data is: ');
-        logger.info(JSON.stringify(realReqData));
-
-        var result = implement(!stringify ? realReqData : JSON.stringify(realReqData));
-
-        logger.info('result for "' + urlName + '" is: ');
-        logger.info(JSON.stringify(result));
-
-        postHandle(result, realReqData, urlName);
-        callback(result);
-    } else {
-        var options = extraOptions || {};
-        options.type = method;
-
-        // if get method, do not stringify
-        options.data = stringify && method != 'get' ? JSON.stringify(realReqData) : realReqData;
-
-        // default dataType: json
-        !options.dataType && (options.dataType = 'json');
-        options.success = function (res) {
-            /**
-             * post handle
-             */
-            postHandle(res, realReqData, urlName);
-            callback(res);
-        };
-        $.ajax(reqInfo.url, options);
-    }
-};
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
+module.exports = seeAjax;
 
 /***/ }),
 /* 4 */
@@ -259,27 +166,26 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
 
 
 
-var $ = __webpack_require__(3);
+var data = __webpack_require__(0);
 
-var config = __webpack_require__(5);
-var getEnv = __webpack_require__(6);
-var getMethod = __webpack_require__(7);
-var postMethod = __webpack_require__(13);
-var putMethod = __webpack_require__(14);
-var deleteMethod = __webpack_require__(15);
-
-var request = {
-    config: config,
-    getEnv: getEnv,
-    get: getMethod,
-    post: postMethod,
-    put: putMethod,
-    delete: deleteMethod
+/**
+ * config application
+ *
+ * @param name
+ * @param option
+ */
+module.exports = function (name, option) {
+    // one
+    if (typeof name == 'string') {
+        data.options[name] = option;
+    }
+    // multi
+    else {
+            for (var attr in name) {
+                if (name.hasOwnProperty(attr)) data.options[attr] = name[attr];
+            }
+        }
 };
-
-$.seeAjax = request;
-
-module.exports = request;
 
 /***/ }),
 /* 5 */
@@ -289,17 +195,13 @@ module.exports = request;
 
 
 
-var $ = __webpack_require__(3);
-
 var data = __webpack_require__(0);
 
 /**
- * config application
- *
- * @param option
+ * set current environment
  */
-module.exports = function (option) {
-  $.extend(true, data.option, option);
+module.exports = function (env) {
+  data.env = env;
 };
 
 /***/ }),
@@ -318,7 +220,7 @@ var data = __webpack_require__(0);
  * @returns {Object.<string, *>|null|*|number}
  */
 module.exports = function () {
-  return data.option.env;
+  return data.env;
 };
 
 /***/ }),
@@ -329,19 +231,101 @@ module.exports = function () {
 
 
 
-var send = __webpack_require__(2);
+var $ = __webpack_require__(1);
+
+var data = __webpack_require__(0);
+var logger = __webpack_require__(2);
+var postHandle = __webpack_require__(8);
 
 /**
- * METHOD get
+ * send a request
  *
- * @param urlName
- * @param reqData
- * @param callback
- * @param stringify
- * @param extraOptions
+ * @param name Defined request name
+ * @param reqData Request data
+ * @param successCallback Success callback
+ * @param errorCallback Error callback
  */
-module.exports = function (urlName, reqData, callback, stringify, extraOptions) {
-  send('get', urlName, reqData, callback, stringify, extraOptions);
+module.exports = function (name, reqData, successCallback, errorCallback) {
+    if (!name) {
+        logger.throwError('name \'' + name + '\' is not defined.');
+        return;
+    }
+
+    // current option
+    var option = data.options[name];
+    // common option
+    var commonOption = data.options['common'] || {};
+
+    if (!option) {
+        logger.throwError('name \'' + name + '\' is not configured.');
+        return;
+    }
+
+    // index to select item
+    var index = data.env;
+
+    // http method, default is GET
+    var method = option.method && option.method[index] || 'get';
+    // stringify request data
+    var stringify = option.stringify && option.stringify[index] || !1;
+    // ajax settings
+    var settings = option.settings && option.settings[index] || {};
+    // url
+    var url = option.url && option.url[index] || '';
+    // request keys
+    var requestKeys = option.requestKeys && option.requestKeys[index] || {};
+    // pre handle
+    var preHandle = option.preHandle && option.preHandle[index];
+    var commonPreHandle = commonOption.preHandle && commonOption.preHandle[index];
+    // implement
+    var implement = option.implement && option.implement[index];
+
+    // ultimate request data after requestKeys mapping
+    var ultimateReqData = $.extend(!0, {}, reqData);
+    for (var ultimateReqDataAttr in ultimateReqData) {
+        if (ultimateReqData.hasOwnProperty(ultimateReqDataAttr) && requestKeys[ultimateReqDataAttr]) {
+            // make a new key
+            ultimateReqData[requestKeys[ultimateReqDataAttr]] = ultimateReqData[ultimateReqDataAttr];
+            // delete old key
+            delete ultimateReqData[ultimateReqDataAttr];
+        }
+    }
+
+    // pre handle
+    commonPreHandle && commonPreHandle(ultimateReqData);
+    preHandle && preHandle(ultimateReqData);
+
+    // custom implement
+    if (implement) {
+        logger.info('Custom implement ajax for "' + name + '", and request data is: ');
+        logger.info(JSON.stringify(ultimateReqData));
+
+        var result = implement(!stringify ? ultimateReqData : JSON.stringify(ultimateReqData));
+
+        logger.info('result for "' + name + '" is: ');
+        logger.info(JSON.stringify(result));
+
+        // post handle
+        postHandle(result, ultimateReqData, name);
+        successCallback(result);
+    } else {
+        settings.type = method;
+        // if get method, do not stringify
+        settings.data = stringify && method != 'get' ? JSON.stringify(ultimateReqData) : ultimateReqData;
+
+        // default dataType: json
+        !settings.dataType && (settings.dataType = 'json');
+        settings.success = function (res, textStatus, jqXHR) {
+            // post handle
+            postHandle(res, ultimateReqData, name);
+
+            successCallback && successCallback(res, textStatus, jqXHR);
+        };
+        settings.error = function (jqXHR, textStatus, errorThrown) {
+            errorCallback && errorCallback(jqXHR, textStatus, errorThrown);
+        };
+        $.ajax(url, settings);
+    }
 };
 
 /***/ }),
@@ -352,276 +336,47 @@ module.exports = function (urlName, reqData, callback, stringify, extraOptions) 
 
 
 
-var data = __webpack_require__(0);
-var logger = __webpack_require__(1);
-
-/**
- * get normalized request data
- *
- * @param urlName Url name
- * @param reqData Request data
- * @returns {{}}
- */
-module.exports = function (urlName, reqData) {
-    /**
-     * real name, commonly is the same as urlName
-     */
-    var name = data.option.name[urlName];
-
-    /**
-     * current environment index
-     * @type {Object.<string, *>|null|*}
-     */
-    var index = data.option.env;
-    /**
-     *
-     * @type {{}}
-     */
-    var normalizedReqData = {};
-
-    if (reqData instanceof Array) reqData.forEach(function (item, idx) {
-        normalizedReqData[data.option.requestKeys[name][index][idx]] = item;
-    });else Object.keys(reqData).forEach(function (key) {
-        normalizedReqData[data.option.requestKeys[name][index][key]] = reqData[key];
-    });
-
-    return {
-        url: data.option.url[name][index],
-        reqData: normalizedReqData
-    };
-};
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
+var JSONRefactor = __webpack_require__(9);
 
 var data = __webpack_require__(0);
-var logger = __webpack_require__(1);
-
-/**
- * get normalized request data
- *
- * @param urlName Url name
- */
-module.exports = function (urlName) {
-    /**
-     * custom methods
-     */
-    var method = data.option.method && data.option.method[urlName];
-
-    /**
-     * current environment index
-     * @type {Object.<string, *>|null|*}
-     */
-    var index = data.option.env;
-
-    if (method instanceof Array) method = method[index];
-
-    method && (method = method.toLowerCase());
-
-    return method;
-};
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-
-var data = __webpack_require__(0);
-var logger = __webpack_require__(1);
-
-/**
- * pre handle request data
- *
- * @param reqData
- * @param urlName
- */
-module.exports = function (reqData, urlName) {
-
-  /**
-   * real name, commonly is the same as urlName
-   */
-  var name = data.option.name[urlName];
-
-  /**
-   * current environment index
-   * @type {Object.<string, *>|null|*}
-   */
-  var index = data.option.env;
-
-  /**
-   * common handler
-   *
-   * @type {preHandle|{common, test, implement}|{common, test2}|Array}
-   */
-  var commonHandle = data.option.preHandle && data.option.preHandle.common;
-  /**
-   * named handler
-   *
-   * @type {preHandle|{common, test, implement}|{common, test2}|*}
-   */
-  var namedHandle = data.option.preHandle && data.option.preHandle[name];
-
-  if (commonHandle instanceof Array) commonHandle = commonHandle[index];
-  if (namedHandle instanceof Array) namedHandle = namedHandle[index];
-
-  typeof commonHandle == 'function' && commonHandle(reqData);
-  typeof namedHandle == 'function' && namedHandle(reqData);
-};
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var JSONRefactor = __webpack_require__(12);
-
-var data = __webpack_require__(0);
-var logger = __webpack_require__(1);
+var logger = __webpack_require__(2);
 
 /**
  * post handle after get response data
  *
  * @param res Response data
  * @param reqData Request data
- * @param urlName Url name
+ * @param name Name
  */
-module.exports = function (res, reqData, urlName) {
+module.exports = function (res, reqData, name) {
 
-  /**
-   * real name, commonly is the same as urlName
-   */
-  var name = data.option.name[urlName];
+    // current option
+    var option = data.options[name];
+    // common option
+    var commonOption = data.options['common'] || {};
 
-  /**
-   * current environment index
-   * @type {Object.<string, *>|null|*}
-   */
-  var index = data.option.env;
+    // index to select item
+    var index = data.env;
 
-  /**
-   * common refactor
-   *
-   * @type {responseRefactor|{common, test, implement}|{common, test2}|Array}
-   */
-  var commonRefactor = data.option.responseRefactor && data.option.responseRefactor.common;
-  /**
-   * named refactor
-   *
-   * @type {responseRefactor|{common, test, implement}|{common, test2}|*}
-   */
-  var namedRefactor = data.option.responseRefactor && data.option.responseRefactor[name];
+    // response refactor
+    var responseRefactor = option.responseRefactor && option.responseRefactor[index];
+    var commonResponseRefactor = commonOption.responseRefactor && commonOption.responseRefactor[index];
 
-  /**
-   * common handler
-   *
-   * @type {postHandle|{common, test, implement}|{common, test2}|Array}
-   */
-  var commonHandle = data.option.postHandle && data.option.postHandle.common;
-  /**
-   * named handler
-   *
-   * @type {postHandle|{common, test, implement}|{common, test2}|*}
-   */
-  var namedHandle = data.option.postHandle && data.option.postHandle[name];
+    // post handle
+    var postHandle = option.postHandle && option.postHandle[index];
+    var commonPostHandle = commonOption.postHandle && commonOption.postHandle[index];
 
-  if (commonRefactor instanceof Array) commonRefactor = commonRefactor[index];
-  if (namedRefactor instanceof Array) namedRefactor = namedRefactor[index];
-  if (commonHandle instanceof Array) commonHandle = commonHandle[index];
-  if (namedHandle instanceof Array) namedHandle = namedHandle[index];
-
-  commonRefactor && (typeof commonRefactor === 'undefined' ? 'undefined' : _typeof(commonRefactor)) == 'object' && JSONRefactor(res, commonRefactor);
-  namedRefactor && (typeof namedRefactor === 'undefined' ? 'undefined' : _typeof(namedRefactor)) == 'object' && JSONRefactor(res, namedRefactor);
-  typeof commonHandle == 'function' && commonHandle(res, reqData, urlName);
-  typeof namedHandle == 'function' && namedHandle(res, reqData, urlName);
+    commonResponseRefactor && JSONRefactor(res, commonResponseRefactor);
+    responseRefactor && JSONRefactor(res, responseRefactor);
+    commonPostHandle && commonPostHandle(res, reqData, name);
+    postHandle && postHandle(res, reqData, name);
 };
 
 /***/ }),
-/* 12 */
+/* 9 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_12__;
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-
-var send = __webpack_require__(2);
-
-/**
- * METHOD post
- *
- * @param urlName
- * @param reqData
- * @param callback
- * @param stringify
- * @param extraOptions
- */
-module.exports = function (urlName, reqData, callback, stringify, extraOptions) {
-  send('post', urlName, reqData, callback, stringify, extraOptions);
-};
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-
-var send = __webpack_require__(2);
-
-/**
- * METHOD put
- *
- * @param urlName
- * @param reqData
- * @param callback
- * @param stringify
- * @param extraOptions
- */
-module.exports = function (urlName, reqData, callback, stringify, extraOptions) {
-  send('put', urlName, reqData, callback, stringify, extraOptions);
-};
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-
-var send = __webpack_require__(2);
-
-/**
- * METHOD delete
- *
- * @param urlName
- * @param reqData
- * @param callback
- * @param stringify
- * @param extraOptions
- */
-module.exports = function (urlName, reqData, callback, stringify, extraOptions) {
-  send('delete', urlName, reqData, callback, stringify, extraOptions);
-};
+module.exports = __WEBPACK_EXTERNAL_MODULE_9__;
 
 /***/ })
 /******/ ]);

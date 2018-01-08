@@ -3,36 +3,33 @@
  */
 
 seeAjax.config({
-    env: 0,
-    name: {
-        test: "test"
-    },
-    url: {
-        test: [
+    test: {
+        method: [
+            void 0,
+            'post'
+        ],
+        stringify: [
+            void 0,
+            true
+        ],
+        settings: [
+            {
+                headers: {
+                    haha: 'hehe'
+                }
+            }
+        ],
+        url: [
             "a.json",
             "b.json"
-        ]
-    },
-    requestKeys: {
-        test: [
-            {
-                key1: 'keya'
-            },
+        ],
+        requestKeys: [
+            void 0,
             {
                 key1: 'keyb'
             }
-        ]
-    },
-    responseRefactor: {
-        common: [
-            {
-                success: 'result|bool'
-            },
-            {
-                success: 'result|bool'
-            }
         ],
-        test: [
+        responseRefactor: [
             {
                 data: [
                     {
@@ -59,40 +56,16 @@ seeAjax.config({
                     }
                 ]
             }
-        ]
-    },
-    preHandle: {
-        common: [
-            function (req) {
-                req.common = 0
-            },
-            function (req) {
-                req.common = 1
-            }
         ],
-        test: [
+        preHandle: [
             function (req) {
                 req.test = 0
             },
             function (req) {
                 req.test = 1
             }
-        ]
-    },
-    postHandle: {
-        common: [
-            function (res, req) {
-                res.common = 0;
-                console.log('req:');
-                console.log(req);
-            },
-            function (res, req) {
-                res.common = 1;
-                console.log('req:');
-                console.log(req);
-            }
         ],
-        test: [
+        postHandle: [
             function (res, req) {
                 res.test = 0;
                 console.log('req:');
@@ -104,56 +77,71 @@ seeAjax.config({
                 console.log(req);
             }
         ]
+    },
+    common: {
+        responseRefactor: [
+            {
+                success: 'result|bool'
+            },
+            {
+                success: 'result|bool'
+            }
+        ],
+        preHandle: [
+            function (req) {
+                req.common = 0
+            },
+            function (req) {
+                req.common = 1
+            }
+        ],
+        postHandle: [
+            function (res, req) {
+                res.common = 0;
+                console.log('req:');
+                console.log(req);
+            },
+            function (res, req) {
+                res.common = 1;
+                console.log('req:');
+                console.log(req);
+            }
+        ]
     }
 });
 
-$.seeAjax.get('test', {key1: 'haha'}, function (res) {
+seeAjax.setEnv(0);
+
+$.seeAjax('test', {key1: 'haha'}, function (res) {
     console.log('env: 0');
     console.log(res);
 
-    $.seeAjax.config({
-        env: 1
-    });
-    $.seeAjax.post('test', {key1: 'haha'}, function (res) {
+    $.seeAjax.setEnv(1);
+    $.seeAjax('test', {key1: 'haha'}, function (res) {
         console.log('env: 1');
         console.log(res);
 
         makeTest2();
-    }, !0);
+    });
 });
 
 function makeTest2() {
     $.seeAjax.config({
-        env: 0,
-        name: {
-            test2: "test2"
-        },
-        url: {
-            test2: [
+        test2: {
+            method: [
+                'post',
+                'post'
+            ],
+            url: [
                 "a.json",
                 "b.json"
-            ]
-        },
-        requestKeys: {
-            test2: [
+            ],
+            requestKeys: [
                 {
                     key1: 'keya'
-                },
-                {
-                    key1: 'keyb'
-                }
-            ]
-        },
-        responseRefactor: {
-            common: [
-                {
-                    success: 'result|bool'
-                },
-                {
-                    success: 'result|bool'
                 }
             ],
-            test2: [
+            responseRefactor: [
                 {
                     data: [
                         {
@@ -180,36 +168,16 @@ function makeTest2() {
                         }
                     ]
                 }
-            ]
-        },
-        preHandle: {
-            common: [
-                function (req) {
-                    req.common2 = 0
-                },
-                function (req) {
-                    req.common2 = 1
-                }
             ],
-            test2: [
+            preHandle: [
                 function (req) {
                     req.test2 = 0
                 },
                 function (req) {
                     req.test2 = 1
                 }
-            ]
-        },
-        postHandle: {
-            common: [
-                function (res) {
-                    res.common2 = 0
-                },
-                function (res) {
-                    res.common2 = 1
-                }
             ],
-            test2: [
+            postHandle: [
                 function (res) {
                     res.test2 = 0
                 },
@@ -218,24 +186,45 @@ function makeTest2() {
                 }
             ]
         },
-        method: {
-            test2: [
-                'get',
-                'post'
+        common: {
+            responseRefactor: [
+                {
+                    success: 'result|bool'
+                },
+                {
+                    success: 'result|bool'
+                }
+            ],
+            preHandle: [
+                function (req) {
+                    req.common2 = 0
+                },
+                function (req) {
+                    req.common2 = 1
+                }
+            ],
+            postHandle: [
+                function (res) {
+                    res.common2 = 0
+                },
+                function (res) {
+                    res.common2 = 1
+                }
             ]
         }
     });
+    seeAjax.setEnv(0);
 
-    $.seeAjax.put('test2', {key1: 'haha'}, function (res) {
+    $.seeAjax('test2', {key1: 'haha'}, function (res) {
         console.log('env: 0');
         console.log(res);
 
-        $.seeAjax.config({
-            env: 1
-        });
-        $.seeAjax.delete('test2', {key1: 'haha'}, function (res) {
+        seeAjax.setEnv(1);
+        $.seeAjax('test2', {key1: 'haha'}, function (res) {
             console.log('env: 1');
             console.log(res);
         });
+    }, function (xhr) {
+        console.log(arguments);
     });
 }

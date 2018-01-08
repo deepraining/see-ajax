@@ -9,5 +9,5 @@ var data = require('./data');
  * @returns {Object.<string, *>|null|*|number}
  */
 module.exports = () => {
-    return data.option.env;
+    return data.env;
 };

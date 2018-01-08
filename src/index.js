@@ -4,21 +4,16 @@
 var $ = require('jquery');
 
 var config = require('./config');
+var setEnv = require('./set_env');
 var getEnv = require('./get_env');
-var getMethod = require('./methods/get');
-var postMethod = require('./methods/post');
-var putMethod = require('./methods/put');
-var deleteMethod = require('./methods/delete');
+var send = require('./send');
 
-var request = {
-    config: config,
-    getEnv: getEnv,
-    get: getMethod,
-    post: postMethod,
-    put: putMethod,
-    delete: deleteMethod
-};
+var seeAjax = send;
 
-$.seeAjax = request;
+seeAjax.config = config;
+seeAjax.setEnv = setEnv;
+seeAjax.getEnv = getEnv;
 
-module.exports = request;
+$.seeAjax = seeAjax;
+
+module.exports = seeAjax;

@@ -5,107 +5,96 @@ var $ = require('jquery');
 
 var data = require('./data');
 var logger = require('./util/logger');
-var getReqInfo = require('./get_req_info');
-var getCustomMethod = require('./get_custom_method');
-var preHandle = require('./pre_handle');
 var postHandle = require('./post_handle');
 
 /**
  * send a request
  *
- * @param method Request Method, like GET, POST, PUT, DELETE, OPTION
- * @param urlName Request url name
+ * @param name Defined request name
  * @param reqData Request data
- * @param callback Success callback
- * @param stringify Whether stringify request data
- * @param extraOptions Extra jquery ajax option
+ * @param successCallback Success callback
+ * @param errorCallback Error callback
  */
-module.exports = (method, urlName, reqData, callback, stringify, extraOptions) => {
-
-    /**
-     * (method, urlName, reqData, callback, extraOptions)
-     */
-    if (typeof stringify == 'object') {
-        extraOptions = stringify;
-        stringify = void 0;
-    }
-
-    /**
-     * check if have custom method
-     */
-    var customMethod = getCustomMethod(urlName);
-
-    customMethod && (method = customMethod);
-
-    /**
-     * real name, commonly is the same as urlName
-     */
-    var name = data.option.name[urlName];
-
-    /**
-     * current environment index
-     * @type {Object.<string, *>|null|*}
-     */
-    var index = data.option.env;
-
+module.exports = (name, reqData, successCallback, errorCallback) => {
     if (!name) {
-        logger.throwError(`name '${urlName}' is not defined.`);
+        logger.throwError(`name '${name}' is not defined.`);
         return;
     }
 
-    /**
-     * request info
-     * @type {{url, reqData}|{}|*}
-     */
-    var reqInfo = getReqInfo(urlName, reqData);
+    // current option
+    var option = data.options[name];
+    // common option
+    var commonOption = data.options['common'] || {};
 
-    /**
-     * real request data
-     */
-    var realReqData = reqInfo.reqData;
+    if (!option) {
+        logger.throwError(`name '${name}' is not configured.`);
+        return;
+    }
 
-    /**
-     * pre handle
-     */
-    preHandle(realReqData, urlName);
+    // index to select item
+    var index = data.env;
 
-    /**
-     * custom ajax implement function
-     *
-     * @type {string|Array|implement|{implement}|*}
-     */
-    var implement = data.option.implement && data.option.implement[name];
-    if (implement instanceof Array) implement = implement[index];
+    // http method, default is GET
+    var method = option.method && option.method[index] || 'get';
+    // stringify request data
+    var stringify = option.stringify && option.stringify[index] || !1;
+    // ajax settings
+    var settings = option.settings && option.settings[index] || {};
+    // url
+    var url = option.url && option.url[index] || '';
+    // request keys
+    var requestKeys = option.requestKeys && option.requestKeys[index] || {};
+    // pre handle
+    var preHandle = option.preHandle && option.preHandle[index];
+    var commonPreHandle = commonOption.preHandle && commonOption.preHandle[index];
+    // implement
+    var implement = option.implement && option.implement[index];
+
+    // ultimate request data after requestKeys mapping
+    var ultimateReqData = $.extend(!0, {}, reqData);
+    for (var ultimateReqDataAttr in ultimateReqData) {
+        if (ultimateReqData.hasOwnProperty(ultimateReqDataAttr) && requestKeys[ultimateReqDataAttr]) {
+            // make a new key
+            ultimateReqData[requestKeys[ultimateReqDataAttr]] = ultimateReqData[ultimateReqDataAttr];
+            // delete old key
+            delete ultimateReqData[ultimateReqDataAttr];
+        }
+    }
+
+    // pre handle
+    commonPreHandle && commonPreHandle(ultimateReqData);
+    preHandle && preHandle(ultimateReqData);
 
     // custom implement
     if (implement) {
-        logger.info(`Custom implement ajax for "${urlName}", and request data is: `);
-        logger.info(JSON.stringify(realReqData));
+        logger.info(`Custom implement ajax for "${name}", and request data is: `);
+        logger.info(JSON.stringify(ultimateReqData));
 
-        var result = implement(!stringify ? realReqData : JSON.stringify(realReqData));
+        var result = implement(!stringify ? ultimateReqData : JSON.stringify(ultimateReqData));
 
-        logger.info(`result for "${urlName}" is: `);
+        logger.info(`result for "${name}" is: `);
         logger.info(JSON.stringify(result));
 
-        postHandle(result, realReqData, urlName);
-        callback(result);
+        // post handle
+        postHandle(result, ultimateReqData, name);
+        successCallback(result);
     }
     else {
-        var options = extraOptions || {};
-        options.type = method;
-
+        settings.type = method;
         // if get method, do not stringify
-        options.data = stringify && method != 'get' ? JSON.stringify(realReqData) : realReqData;
+        settings.data = stringify && method != 'get' ? JSON.stringify(ultimateReqData) : ultimateReqData;
 
         // default dataType: json
-        !options.dataType && (options.dataType = 'json');
-        options.success = (res) => {
-            /**
-             * post handle
-             */
-            postHandle(res, realReqData, urlName);
-            callback(res);
+        !settings.dataType && (settings.dataType = 'json');
+        settings.success = (res, textStatus, jqXHR) => {
+            // post handle
+            postHandle(res, ultimateReqData, name);
+
+            successCallback && successCallback(res, textStatus, jqXHR);
         };
-        $.ajax(reqInfo.url, options);
+        settings.error = (jqXHR, textStatus, errorThrown) => {
+            errorCallback && errorCallback(jqXHR, textStatus, errorThrown);
+        };
+        $.ajax(url, settings);
     }
 };

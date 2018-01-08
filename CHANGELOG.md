@@ -1,5 +1,12 @@
 # jquery.seeAjax changelog
 
+## 0.2.0
+
+- remove `get, post, put, delete` methods, take `seeAjax(name, reqData, successCallback, errorCallback)` instead
+- newly define `config(name, option)`, `config({name: option})`
+- take `stringify, settings` into config option
+- add `setEnv` method
+
 ## 0.1.2
 
 - add `method` handler

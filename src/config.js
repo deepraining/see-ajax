@@ -1,15 +1,23 @@
 
 'use strict';
 
-var $ = require('jquery');
-
 var data = require('./data');
 
 /**
  * config application
  *
+ * @param name
  * @param option
  */
-module.exports = (option) => {
-    $.extend(true, data.option, option);
+module.exports = (name, option) => {
+    // one
+    if (typeof name == 'string') {
+        data.options[name] = option;
+    }
+    // multi
+    else {
+        for (var attr in name) {
+            if (name.hasOwnProperty(attr)) data.options[attr] = name[attr];
+        }
+    }
 };
