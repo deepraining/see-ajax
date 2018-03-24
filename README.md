@@ -173,9 +173,9 @@ sometimes, you have not to use ajax, but other ways, for some reasons, this is w
 
 ```
 implement: [
-    (res, reqData, name) => {... return a response ...}, // env: 0
-    (res, reqData, name) => {... return a response ...}, // env: 1
-    (res, reqData, name) => {... return a response ...}, // env: 2
+    reqData => {... return a response ...}, // env: 0
+    reqData => {... return a response ...}, // env: 1
+    reqData => {... return a response ...}, // env: 2
 ]
 ```
 
