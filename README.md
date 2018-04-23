@@ -12,11 +12,6 @@
 ```
 var seeAjax = require('see-ajax');
 seeAjax(...);
-
-// or
-var $ = require('jquery');
-require('see-ajax')
-$.seeAjax(...);
 ```
 
 or load scripts directly
@@ -24,11 +19,9 @@ or load scripts directly
 ```
 <script src="path/to/jquery"></script>
 <script src="path/to/json-refactor"></script>
-<script src="path/to/jquery.seeAjax"></script>
+<script src="path/to/see-ajax"></script>
 <script>
 seeAjax(...);
-// or
-$.seeAjax(...);
 </script>
 ```
 

@@ -97,7 +97,7 @@ seeAjax.config('implement', {
     ]
 });
 
-$.seeAjax('implement', {key1: 'haha'}, function (res) {
+seeAjax('implement', {key1: 'haha'}, function (res) {
     console.log('env: 0');
     console.log(res);
 });

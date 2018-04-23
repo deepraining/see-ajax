@@ -1,12 +1,12 @@
 /*!
  * 
- *     jquery.seeAjax v0.2.0
+ *     see-ajax v0.2.1
  * 
- *     https://github.com/senntyou/jquery.seeAjax
+ *     https://github.com/senntyou/see-ajax
  * 
  *     @senntyou <jiangjinbelief@163.com>
  * 
- *     2018-01-08 10:29:37
+ *     2018-04-23 18:32:01
  *     
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -113,7 +113,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
 
 
 
-var prefix = 'jquery.seeAjax: ';
+var prefix = 'see-ajax: ';
 
 module.exports = {
     log: function log(str) {
@@ -153,8 +153,6 @@ var seeAjax = send;
 seeAjax.config = config;
 seeAjax.setEnv = setEnv;
 seeAjax.getEnv = getEnv;
-
-$.seeAjax = seeAjax;
 
 module.exports = seeAjax;
 

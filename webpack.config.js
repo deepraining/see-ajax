@@ -9,7 +9,7 @@ module.exports = {
   entry: './src/index.js',
   output: {
     path: __dirname + '/dist',
-    filename: 'jquery.seeAjax.js',
+    filename: 'see-ajax.js',
     library: 'seeAjax',
     libraryTarget: 'umd'
   },
@@ -26,9 +26,9 @@ module.exports = {
   },
   plugins: [
     new webpack.BannerPlugin(`
-    jquery.seeAjax v${packageJson.version}
+    see-ajax v${packageJson.version}
 
-    https://github.com/senntyou/jquery.seeAjax
+    https://github.com/senntyou/see-ajax
 
     @senntyou <jiangjinbelief@163.com>
 

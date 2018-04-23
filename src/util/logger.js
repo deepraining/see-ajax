@@ -1,7 +1,7 @@
 
 'use strict';
 
-var prefix = 'jquery.seeAjax: ';
+var prefix = 'see-ajax: ';
 
 module.exports = {
     log: (str) => {

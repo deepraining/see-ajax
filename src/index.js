@@ -14,6 +14,4 @@ seeAjax.config = config;
 seeAjax.setEnv = setEnv;
 seeAjax.getEnv = getEnv;
 
-$.seeAjax = seeAjax;
-
 module.exports = seeAjax;

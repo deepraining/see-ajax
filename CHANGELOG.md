@@ -1,4 +1,8 @@
-# jquery.seeAjax changelog
+# see-ajax changelog
+
+## 0.2.1
+
+- rename to `see-ajax`
 
 ## 0.2.0
 

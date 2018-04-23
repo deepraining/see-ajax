@@ -112,12 +112,12 @@ seeAjax.config({
 
 seeAjax.setEnv(0);
 
-$.seeAjax('test', {key1: 'haha'}, function (res) {
+seeAjax('test', {key1: 'haha'}, function (res) {
     console.log('env: 0');
     console.log(res);
 
-    $.seeAjax.setEnv(1);
-    $.seeAjax('test', {key1: 'haha'}, function (res) {
+    seeAjax.setEnv(1);
+    seeAjax('test', {key1: 'haha'}, function (res) {
         console.log('env: 1');
         console.log(res);
 
@@ -126,7 +126,7 @@ $.seeAjax('test', {key1: 'haha'}, function (res) {
 });
 
 function makeTest2() {
-    $.seeAjax.config({
+    seeAjax.config({
         test2: {
             method: [
                 'post',
@@ -215,12 +215,12 @@ function makeTest2() {
     });
     seeAjax.setEnv(0);
 
-    $.seeAjax('test2', {key1: 'haha'}, function (res) {
+    seeAjax('test2', {key1: 'haha'}, function (res) {
         console.log('env: 0');
         console.log(res);
 
         seeAjax.setEnv(1);
-        $.seeAjax('test2', {key1: 'haha'}, function (res) {
+        seeAjax('test2', {key1: 'haha'}, function (res) {
             console.log('env: 1');
             console.log(res);
         });
