@@ -1,8 +1,6 @@
 
 'use strict';
 
-var $ = require('jquery');
-
 var config = require('./config');
 var setEnv = require('./set_env');
 var getEnv = require('./get_env');
