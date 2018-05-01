@@ -1,8 +1,7 @@
 
 'use strict';
 
-var $ = require('jquery');
-
+var setting = require('./setting');
 var data = require('./data');
 var logger = require('./util/logger');
 var postHandle = require('./post_handle');
@@ -51,7 +50,7 @@ module.exports = (name, reqData, successCallback, errorCallback) => {
     var implement = option.implement && option.implement[index];
 
     // ultimate request data after requestKeys mapping
-    var ultimateReqData = $.extend(!0, {}, reqData);
+    var ultimateReqData = setting.extend(!0, {}, reqData);
     for (var ultimateReqDataAttr in ultimateReqData) {
         if (ultimateReqData.hasOwnProperty(ultimateReqDataAttr) && requestKeys[ultimateReqDataAttr]) {
             // make a new key
@@ -67,20 +66,19 @@ module.exports = (name, reqData, successCallback, errorCallback) => {
 
     // custom implement
     if (implement) {
-        logger.info(`Custom implement ajax for "${name}", and request data is: `);
-        logger.info(JSON.stringify(ultimateReqData));
+        logger.info(`Custom implement ajax for "${name}", and request data is: ${JSON.stringify(ultimateReqData)}`);
 
         var result = implement(!stringify ? ultimateReqData : JSON.stringify(ultimateReqData));
 
-        logger.info(`result for "${name}" is: `);
-        logger.info(JSON.stringify(result));
+        logger.info(`result for "${name}" is: ${JSON.stringify(result)}`);
 
         // post handle
         postHandle(result, ultimateReqData, name);
         successCallback(result);
     }
     else {
-        settings.type = method;
+        settings.url = url;
+        settings.method = method;
         // if get method, do not stringify
         settings.data = stringify && method != 'get' ? JSON.stringify(ultimateReqData) : ultimateReqData;
 
@@ -95,6 +93,9 @@ module.exports = (name, reqData, successCallback, errorCallback) => {
         settings.error = (jqXHR, textStatus, errorThrown) => {
             errorCallback && errorCallback(jqXHR, textStatus, errorThrown);
         };
-        $.ajax(url, settings);
+
+        if (!setting.request) logger.throwError('`setting.request` is not configured');
+
+        setting.request(settings);
     }
 };

@@ -2,8 +2,7 @@
 
 ## 0.2.2
 
-- make standalone `see-ajax` without `jquery`
-- add jquery source code `3.3.1`
+- make custom `see-ajax` without `jquery`
 
 ## 0.2.1
 

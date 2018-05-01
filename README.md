@@ -2,7 +2,7 @@
 
 ## requirements
 
-* [jquery](https://github.com/jquery/jquery)
+* [jquery](https://github.com/jquery/jquery) [optional]
 * [json-refactor](https://github.com/senntyou/json-refactor)
 
 ## quick start
@@ -41,7 +41,7 @@ seeAjax(name, reqData, successCallback, errorCallback);
 
 ## config options
 
-example: 
+example:
 
 ```
 {
@@ -161,7 +161,7 @@ postHandle: [
 ### implement
 
 custom implement instead of ajax.
- 
+
 sometimes, you have not to use ajax, but other ways, for some reasons, this is what you want.
 
 ```
@@ -222,6 +222,24 @@ seeAjax(name, reqData, successCallback, errorCallback)
 * `successCallback`: success callback, refer to [https://api.jquery.com/jQuery.ajax/](https://api.jquery.com/jQuery.ajax/)
 * `errorCallback`: error callback, refer to [https://api.jquery.com/jQuery.ajax/](https://api.jquery.com/jQuery.ajax/)
 
+### set (only `see-ajax.custom.js`)
+
+set inner function realization, especially `request`;
+
+```
+set({
+    request: $.ajax
+});
+```
+
+* `request`: config your own request method, such as `jQuery.ajax`
+
+```
+settings => {...}
+```
+
+`settings`: request [settings](https://api.jquery.com/jQuery.ajax/)
+
 ## handlers sequences while processing
 
 1. `method`: check which http method to request, default is `GET`.
@@ -239,5 +257,34 @@ seeAjax(name, reqData, successCallback, errorCallback)
 9. `postHandle`: more handling after refactoring response data
     1. `common`: common handling, if have
     2. `name`: named handling
-    
+
+## without `jquery`
+
+by default, `see-ajax` is rely on `jquery`.
+
+however, you can use your ajax engine to replace `jquery.ajax`. like [reqwest](https://github.com/ded/reqwest)
+
+if you do, you should make it like this:
+
+```
+const seeAjax = require('see-ajax/dist/see-ajax.custom');
+const reqwest = require('reqwest');
+
+seeAjax.set({
+    request: reqwest
+});
+
+// or
+
+seeAjax.set({
+    request: settings => {
+        // do some with settings
+
+        reqwest(settings);
+    }
+});
+
+// ..., others is the same
+```
+
 ## [demo code](./example)
