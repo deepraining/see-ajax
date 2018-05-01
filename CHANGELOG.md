@@ -1,5 +1,10 @@
 # see-ajax changelog
 
+## 0.2.2
+
+- make standalone `see-ajax` without `jquery`
+- add jquery source code `3.3.1`
+
 ## 0.2.1
 
 - rename to `see-ajax`
@@ -22,4 +27,4 @@
 ## 0.1.0
 
 - New version, with many updates.
-- Rewrite core scripts, and update docs. 
+- Rewrite core scripts, and update docs.
