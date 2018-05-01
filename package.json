@@ -28,5 +28,8 @@
     "babel-preset-stage-1": "^6.24.1",
     "moment": "^2.20.1",
     "webpack": "^3.10.0"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
