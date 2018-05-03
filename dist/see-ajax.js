@@ -1,12 +1,12 @@
 /*!
  * 
- *     see-ajax v0.2.2
+ *     see-ajax v0.2.3
  * 
  *     https://github.com/senntyou/see-ajax
  * 
  *     @senntyou <jiangjinbelief@163.com>
  * 
- *     2018-05-01 15:55:31
+ *     2018-05-03 19:24:02
  *     
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -110,7 +110,9 @@ module.exports = {
     // custom request function
     request: void 0,
     // custom extend function
-    extend: void 0
+    extend: void 0,
+    // whether current mode is debug
+    debug: !0
 };
 
 /***/ }),
@@ -166,6 +168,7 @@ var seeAjax = send;
 seeAjax.config = config;
 seeAjax.setEnv = setEnv;
 seeAjax.getEnv = getEnv;
+seeAjax.set = set;
 
 module.exports = seeAjax;
 
@@ -313,15 +316,21 @@ module.exports = function (name, reqData, successCallback, errorCallback) {
 
     // custom implement
     if (implement) {
-        logger.info('Custom implement ajax for "' + name + '", and request data is: ' + JSON.stringify(ultimateReqData));
+        setting.debug && logger.info('Custom implement ajax for "' + name + '", and request data is: ' + JSON.stringify(ultimateReqData));
 
         var result = implement(!stringify ? ultimateReqData : JSON.stringify(ultimateReqData));
 
-        logger.info('result for "' + name + '" is: ' + JSON.stringify(result));
+        setting.debug && logger.info('result for "' + name + '" is: ' + JSON.stringify(result));
 
         // post handle
         postHandle(result, ultimateReqData, name);
-        successCallback(result);
+
+        // implement
+        var implementDelay = option.implementDelay && option.implementDelay[index];
+
+        if (typeof implementDelay === 'number' && implementDelay > 0) setTimeout(function (_) {
+            successCallback(result);
+        }, implementDelay);else successCallback(result);
     } else {
         settings.url = url;
         settings.method = method;

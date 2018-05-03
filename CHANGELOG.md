@@ -1,5 +1,9 @@
 # see-ajax changelog
 
+## 0.2.3
+
+- add `debug, implementDelay` option
+
 ## 0.2.2
 
 - make custom `see-ajax` without `jquery`

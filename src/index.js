@@ -18,5 +18,6 @@ var seeAjax = send;
 seeAjax.config = config;
 seeAjax.setEnv = setEnv;
 seeAjax.getEnv = getEnv;
+seeAjax.set = set;
 
 module.exports = seeAjax;

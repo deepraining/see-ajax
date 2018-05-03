@@ -94,7 +94,14 @@ seeAjax.config('implement', {
                 ]
             }
         }
+    ],
+    implementDelay: [
+        1000
     ]
+});
+
+seeAjax.set({
+    debug: !1
 });
 
 seeAjax('implement', {key1: 'haha'}, function (res) {

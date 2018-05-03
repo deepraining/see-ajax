@@ -66,15 +66,24 @@ module.exports = (name, reqData, successCallback, errorCallback) => {
 
     // custom implement
     if (implement) {
-        logger.info(`Custom implement ajax for "${name}", and request data is: ${JSON.stringify(ultimateReqData)}`);
+        setting.debug && logger.info(`Custom implement ajax for "${name}", and request data is: ${JSON.stringify(ultimateReqData)}`);
 
         var result = implement(!stringify ? ultimateReqData : JSON.stringify(ultimateReqData));
 
-        logger.info(`result for "${name}" is: ${JSON.stringify(result)}`);
+        setting.debug && logger.info(`result for "${name}" is: ${JSON.stringify(result)}`);
 
         // post handle
         postHandle(result, ultimateReqData, name);
-        successCallback(result);
+
+        // implement
+        let implementDelay = option.implementDelay && option.implementDelay[index];
+
+        if (typeof implementDelay === 'number' && implementDelay > 0)
+            setTimeout(_ => {
+                successCallback(result);
+            }, implementDelay);
+        else
+            successCallback(result);
     }
     else {
         settings.url = url;

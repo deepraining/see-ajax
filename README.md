@@ -29,7 +29,7 @@ seeAjax(...);
 
 ```
 seeAjax.config(name, {
-    // options: method, stringify, settings, url, requestKeys, responseRefactor, preHandle, postHandle, implement
+    // options: method, stringify, settings, url, requestKeys, responseRefactor, preHandle, postHandle, implement, implementDelay
 });
 ```
 
@@ -53,7 +53,8 @@ example:
     responseRefactor: [...],
     preHandle: [...],
     postHandle: [...],
-    implement: [...]
+    implement: [...],
+    implementDelay: [...]
 }
 ```
 
@@ -174,6 +175,17 @@ implement: [
 
 * `note`: every function should return a value, like ajax response
 
+### implementDelay
+
+milliseconds delay for implement, default is `0`
+
+```
+implementDelay: [
+    1000, // 1 second delay
+    100 // 0.1 second delay
+]
+```
+
 ## api
 
 ### config
@@ -222,23 +234,26 @@ seeAjax(name, reqData, successCallback, errorCallback)
 * `successCallback`: success callback, refer to [https://api.jquery.com/jQuery.ajax/](https://api.jquery.com/jQuery.ajax/)
 * `errorCallback`: error callback, refer to [https://api.jquery.com/jQuery.ajax/](https://api.jquery.com/jQuery.ajax/)
 
-### set (only `see-ajax.custom.js`)
+### set
 
-set inner function realization, especially `request`;
+set custom config;
 
 ```
 set({
-    request: $.ajax
+    request: $.ajax,
+    debug: !0
 });
 ```
 
-* `request`: config your own request method, such as `jQuery.ajax`
+* `request`: config your own request method, default is `jQuery.ajax`
 
 ```
 settings => {...}
 ```
 
 `settings`: request [settings](https://api.jquery.com/jQuery.ajax/)
+
+* `debug`: whether in debug mode, default is `true`
 
 ## handlers sequences while processing
 
