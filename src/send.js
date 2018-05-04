@@ -6,6 +6,21 @@ var data = require('./data');
 var logger = require('./util/logger');
 var postHandle = require('./post_handle');
 
+
+let implementSend = (name, result, ultimateReqData, successCallback) => {
+    if (setting.debug) {
+        logger.info(`Custom implement ajax for "${name}", and request data is:`);
+        console.log(ultimateReqData);
+        logger.info(`result for "${name}" is:`);
+        console.log(result);
+    }
+
+    // post handle
+    postHandle(result, ultimateReqData, name);
+
+    successCallback(result);
+};
+
 /**
  * send a request
  *
@@ -66,24 +81,18 @@ module.exports = (name, reqData, successCallback, errorCallback) => {
 
     // custom implement
     if (implement) {
-        setting.debug && logger.info(`Custom implement ajax for "${name}", and request data is: ${JSON.stringify(ultimateReqData)}`);
 
         var result = implement(!stringify ? ultimateReqData : JSON.stringify(ultimateReqData));
-
-        setting.debug && logger.info(`result for "${name}" is: ${JSON.stringify(result)}`);
-
-        // post handle
-        postHandle(result, ultimateReqData, name);
 
         // implement
         let implementDelay = option.implementDelay && option.implementDelay[index];
 
         if (typeof implementDelay === 'number' && implementDelay > 0)
             setTimeout(_ => {
-                successCallback(result);
+                implementSend(name, result, ultimateReqData, successCallback);
             }, implementDelay);
         else
-            successCallback(result);
+            implementSend(name, result, ultimateReqData, successCallback);
     }
     else {
         settings.url = url;

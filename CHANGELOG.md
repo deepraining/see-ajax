@@ -1,5 +1,9 @@
 # see-ajax changelog
 
+## 0.2.4
+
+- optimize `implement` realization
+
 ## 0.2.3
 
 - add `debug, implementDelay` option
