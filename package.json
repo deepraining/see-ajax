@@ -22,21 +22,24 @@
     "json-refactor": "^0.1.3"
   },
   "devDependencies": {
-    "babel-core": "^6.25.0",
-    "babel-loader": "^7.1.1",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-stage-1": "^6.24.1",
+    "bootstrap": "^3.3.7",
     "extend": "^3.0.1",
-    "moment": "^2.20.1",
+    "moment": "^2.22.1",
     "reqwest": "^2.0.5",
-    "webpack": "^3.10.0"
+    "yume": "^0.0.2"
+  },
+  "scripts": {
+    "demo": "yume dev demo",
+    "demo-implement": "yume dev demo-implement",
+    "demo-custom": "yume dev demo-custom",
+    "example": "yume dev example",
+    "example-implement": "yume dev example-implement",
+    "example-custom": "yume dev example-custom",
+    "dist.index": "yume dist index",
+    "dist.custom": "yume dist custom",
+    "dist": "npm run dist.index && npm run dist.custom"
   },
   "files": [
     "dist"
-  ],
-  "scripts": {
-    "dist": "node ./scripts/pack.js",
-    "dist.custom": "node ./scripts/pack.custom.js",
-    "dist-all": "npm run dist && npm run dist.custom"
-  }
+  ]
 }
