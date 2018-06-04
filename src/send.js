@@ -84,7 +84,7 @@ module.exports = (name, reqData, successCallback, errorCallback) => {
 
         var result = implement(!stringify ? ultimateReqData : JSON.stringify(ultimateReqData));
 
-        // implement
+        // implement delay
         let implementDelay = option.implementDelay && option.implementDelay[index];
 
         if (typeof implementDelay === 'number' && implementDelay > 0)

@@ -1,13 +1,16 @@
 {
   "name": "see-ajax",
-  "version": "0.2.4-alpha",
-  "description": "A wrapped jquery ajax handling, with custom request keys, response refactoring, pre handling, post handling.",
+  "version": "0.2.4",
+  "description": "An ajax wrapper, with customizing request keys, refactoring response, pre handling, post handling, etc.",
   "homepage": "https://github.com/senntyou/see-ajax",
   "author": "senntyou",
   "keywords": [
     "jquery",
     "ajax",
+    "wrapper",
+    "json",
     "refactor",
+    "response",
     "handle"
   ],
   "main": "dist/see-ajax.js",
@@ -19,24 +22,27 @@
   },
   "dependencies": {
     "jquery": "1.9.1 - 3",
-    "json-refactor": "^0.1.3"
+    "json-refactor": "^0.1.4"
   },
   "devDependencies": {
-    "babel-core": "^6.25.0",
-    "babel-loader": "^7.1.1",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-stage-1": "^6.24.1",
+    "bootstrap": "^3.3.7",
     "extend": "^3.0.1",
-    "moment": "^2.20.1",
+    "moment": "^2.22.1",
     "reqwest": "^2.0.5",
-    "webpack": "^3.10.0"
+    "yume": "^0.0.2"
+  },
+  "scripts": {
+    "demo": "yume dev demo",
+    "demo-implement": "yume dev demo-implement",
+    "demo-custom": "yume dev demo-custom",
+    "example": "yume dev example",
+    "example-implement": "yume dev example-implement",
+    "example-custom": "yume dev example-custom",
+    "dist.index": "yume dist index",
+    "dist.custom": "yume dist custom",
+    "dist": "npm run dist.index && npm run dist.custom"
   },
   "files": [
     "dist"
-  ],
-  "scripts": {
-    "dist": "node ./scripts/pack.js",
-    "dist.custom": "node ./scripts/pack.custom.js",
-    "dist-all": "npm run dist && npm run dist.custom"
-  }
+  ]
 }

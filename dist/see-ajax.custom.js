@@ -6,7 +6,7 @@
  * 
  *     @senntyou <jiangjinbelief@163.com>
  * 
- *     2018-05-04 10:09:55
+ *     2018-05-19 10:38:45
  *     
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -178,8 +178,6 @@ module.exports = seeAjax;
 "use strict";
 
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var hasOwn = Object.prototype.hasOwnProperty;
 var toStr = Object.prototype.toString;
 
@@ -206,7 +204,7 @@ var isPlainObject = function isPlainObject(obj) {
 	// Own properties are enumerated firstly, so to speed up,
 	// if last one is own, then all properties are own.
 	var key;
-	for (key in obj) {/**/}
+	for (key in obj) { /**/ }
 
 	return typeof key === 'undefined' || hasOwn.call(obj, key);
 };
@@ -225,7 +223,7 @@ module.exports = function extend() {
 		// skip the boolean and the target
 		i = 2;
 	}
-	if (target == null || (typeof target === 'undefined' ? 'undefined' : _typeof(target)) !== 'object' && typeof target !== 'function') {
+	if (target == null || (typeof target !== 'object' && typeof target !== 'function')) {
 		target = {};
 	}
 
@@ -252,7 +250,7 @@ module.exports = function extend() {
 						// Never move original objects, clone them
 						target[name] = extend(deep, clone, copy);
 
-						// Don't bring in undefined values
+					// Don't bring in undefined values
 					} else if (typeof copy !== 'undefined') {
 						target[name] = copy;
 					}
@@ -264,6 +262,7 @@ module.exports = function extend() {
 	// Return the modified object
 	return target;
 };
+
 
 /***/ }),
 /* 5 */
