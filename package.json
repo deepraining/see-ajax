@@ -1,7 +1,7 @@
 {
   "name": "see-ajax",
-  "version": "0.2.4-alpha",
-  "description": "A wrapped jquery ajax handling, with custom request keys, response refactoring, pre handling, post handling.",
+  "version": "0.2.4",
+  "description": "An ajax wrapper, with customizing request keys, refactoring response, pre handling, post handling, etc.",
   "homepage": "https://github.com/senntyou/see-ajax",
   "author": "senntyou",
   "keywords": [
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "jquery": "1.9.1 - 3",
-    "json-refactor": "^0.1.3"
+    "json-refactor": "^0.1.4"
   },
   "devDependencies": {
     "bootstrap": "^3.3.7",
