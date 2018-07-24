@@ -1,12 +1,12 @@
 /*!
  * 
- *     see-ajax v0.2.4-alpha
+ *     see-ajax v0.3.0
  * 
  *     https://github.com/senntyou/see-ajax
  * 
  *     @senntyou <jiangjinbelief@163.com>
  * 
- *     2018-05-19 10:38:45
+ *     2018-07-24 16:46:16
  *     
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -342,20 +342,6 @@ var data = __webpack_require__(0);
 var logger = __webpack_require__(2);
 var postHandle = __webpack_require__(9);
 
-var implementSend = function implementSend(name, result, ultimateReqData, successCallback) {
-    if (setting.debug) {
-        logger.info('Custom implement ajax for "' + name + '", and request data is:');
-        console.log(ultimateReqData);
-        logger.info('result for "' + name + '" is:');
-        console.log(result);
-    }
-
-    // post handle
-    postHandle(result, ultimateReqData, name);
-
-    successCallback(result);
-};
-
 /**
  * send a request
  *
@@ -416,20 +402,24 @@ module.exports = function (name, reqData, successCallback, errorCallback) {
 
     // custom implement
     if (implement) {
+        implement(function (result) {
+            if (setting.debug) {
+                logger.info('Custom implement ajax for "' + name + '", and request data is:');
+                console.log(ultimateReqData);
+                logger.info('result for "' + name + '" is:');
+                console.log(result);
+            }
 
-        var result = implement(!stringify ? ultimateReqData : JSON.stringify(ultimateReqData));
+            // post handle
+            postHandle(result, ultimateReqData, name);
 
-        // implement
-        var implementDelay = option.implementDelay && option.implementDelay[index];
-
-        if (typeof implementDelay === 'number' && implementDelay > 0) setTimeout(function (_) {
-            implementSend(name, result, ultimateReqData, successCallback);
-        }, implementDelay);else implementSend(name, result, ultimateReqData, successCallback);
+            successCallback(result);
+        }, !stringify ? ultimateReqData : JSON.stringify(ultimateReqData));
     } else {
         settings.url = url;
         settings.method = method;
         // if get method, do not stringify
-        settings.data = stringify && method != 'get' ? JSON.stringify(ultimateReqData) : ultimateReqData;
+        settings.data = stringify && method !== 'get' ? JSON.stringify(ultimateReqData) : ultimateReqData;
 
         // default dataType: json
         !settings.dataType && (settings.dataType = 'json');

@@ -58,8 +58,10 @@ module.exports = seeAjax => {
             }
         ],
         implement: [
-            function (data) {
-                return {
+            function (cb, req) {
+                console.log('req', req);
+
+                cb({
                     "result": 1,
                     "msg": "success",
                     "data": [
@@ -90,11 +92,8 @@ module.exports = seeAjax => {
                             ]
                         }
                     ]
-                }
+                })
             }
-        ],
-        implementDelay: [
-            1000
         ]
     });
 
