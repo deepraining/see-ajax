@@ -6,21 +6,6 @@ var data = require('./data');
 var logger = require('./util/logger');
 var postHandle = require('./post_handle');
 
-
-let implementSend = (name, result, ultimateReqData, successCallback) => {
-    if (setting.debug) {
-        logger.info(`Custom implement ajax for "${name}", and request data is:`);
-        console.log(ultimateReqData);
-        logger.info(`result for "${name}" is:`);
-        console.log(result);
-    }
-
-    // post handle
-    postHandle(result, ultimateReqData, name);
-
-    successCallback(result);
-};
-
 /**
  * send a request
  *
@@ -81,24 +66,25 @@ module.exports = (name, reqData, successCallback, errorCallback) => {
 
     // custom implement
     if (implement) {
+        implement(result => {
+            if (setting.debug) {
+                logger.info(`Custom implement ajax for "${name}", and request data is:`);
+                console.log(ultimateReqData);
+                logger.info(`result for "${name}" is:`);
+                console.log(result);
+            }
 
-        var result = implement(!stringify ? ultimateReqData : JSON.stringify(ultimateReqData));
+            // post handle
+            postHandle(result, ultimateReqData, name);
 
-        // implement delay
-        let implementDelay = option.implementDelay && option.implementDelay[index];
-
-        if (typeof implementDelay === 'number' && implementDelay > 0)
-            setTimeout(_ => {
-                implementSend(name, result, ultimateReqData, successCallback);
-            }, implementDelay);
-        else
-            implementSend(name, result, ultimateReqData, successCallback);
+            successCallback(result);
+        }, !stringify ? ultimateReqData : JSON.stringify(ultimateReqData));
     }
     else {
         settings.url = url;
         settings.method = method;
         // if get method, do not stringify
-        settings.data = stringify && method != 'get' ? JSON.stringify(ultimateReqData) : ultimateReqData;
+        settings.data = stringify && method !== 'get' ? JSON.stringify(ultimateReqData) : ultimateReqData;
 
         // default dataType: json
         !settings.dataType && (settings.dataType = 'json');
