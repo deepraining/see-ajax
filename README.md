@@ -4,87 +4,77 @@ An ajax wrapper, with customizing request keys, refactoring response, pre handli
 
 ## requirements
 
-* [jquery](https://github.com/jquery/jquery) [optional]
-* [json-refactor](https://github.com/senntyou/json-refactor)
+- [json-refactor](https://github.com/senntyou/json-refactor)
+- [reqwest](https://github.com/ded/reqwest)
 
-## quick start
+## related
 
-### 1. load resources
+- [see-fetch](https://github.com/senntyou/see-fetch)
+
+## note
+
+- Only for `json` response.
+
+## Quick start.
 
 ```
 const seeAjax = require('see-ajax');
-seeAjax(...);
 ```
 
-or load scripts directly
-
-```
-<script src="path/to/jquery"></script>
-<script src="path/to/json-refactor"></script>
-<script src="path/to/see-ajax"></script>
-<script>
-seeAjax(...);
-</script>
-```
-
-### 2. config application
+Configure application.
 
 ```
 seeAjax.config(name, {
-    {
-        method: [...],
-        stringify: [...],
-        settings: [...],
-        url: [...],
-        requestKeys: [...],
-        responseRefactor: [...],
-        preHandle: [...],
-        postHandle: [...],
-        implement: [...]
-    }
+  method: [...],
+  stringify: [...],
+  settings: [...],
+  url: [...],
+  requestKeys: [...],
+  responseRefactor: [...],
+  preHandle: [...],
+  postHandle: [...],
+  implement: [...]
 });
 ```
 
-### 3. use
+Make a request.
 
 ```
-seeAjax(name, reqData, successCallback, errorCallback);
+seeAjax(name, params, successCallback, errorCallback);
 ```
 
-## config options
+## Config options.
 
-### method
+### `method`
 
-Which http method to use, default is `GET`.
+Decide which http method to use. Default is `GET`.
 
 ```
 method: [
-    'delete', // env: 0, use DELETE
-    'put', // env: 1, use PUT
-    'post'// env: 2, use POST
-    // other env, use GET
+    'delete', // env: 0, DELETE
+    'put', // env: 1, PUT
+    'post'// env: 2, POST
+    // other env, GET
 ]
 ```
 
-### stringify
+### `stringify`
 
-Whether stringify request data, and put it into `body`, but not in the `header`.
+Decide Whether to stringify request params. If `true`, the server will receive string, but not `key-value` pairs. Default is `false`.
 
-Default is `false`.
-
-* note: If `GET` method, request data will always not stringify.
+- note: If `GET` method, request params will not stringify at any time.
 
 ```
 stringify: [
-    void 0, // env: 0, no
+    undefined, // env: 0, no
     true // env: 1, yes
     // other env, no
 ]
 ```
 
-### settings
+### `settings`
 
-Extra ajax settings, refer to [https://api.jquery.com/jQuery.ajax/](https://api.jquery.com/jQuery.ajax/).
+Extra ajax options. More to see [reqwest - options](https://github.com/ded/reqwest#options).
 
 ```
 settings: [
@@ -93,7 +83,7 @@ settings: [
 ]
 ```
 
-### url
+### `url`
 
 Url to request.
 
@@ -105,83 +95,81 @@ url: [
 ]
 ```
 
-### requestKeys
+### `requestKeys`
 
 Request keys mapping.
 
 ```
 requestKeys: [
-    {displayKey: 'realKey'}, // env: 0
-    {displayKey: 'realKey'}, // env: 1
-    {displayKey: 'realKey'}, // env: 2
+    {sourceKey: 'newKey'}, // env: 0
+    {sourceKey: 'newKey'}, // env: 1
+    {sourceKey: 'newKey'}, // env: 2
 ]
 ```
 
-### responseRefactor
+### `responseRefactor`
 
-Refactor response data, after ajax responding.
+Refactor response json data, after `ajax` responding.
 
 ```
 responseRefactor: [
-    {... refactor map ...}, // env: 0
-    {... refactor map ...}, // env: 1
-    {... refactor map ...}, // env: 2
+    {... refactor rules ...}, // env: 0
+    {... refactor rules ...}, // env: 1
+    {... refactor rules ...}, // env: 2
 ]
 ```
 
-* `refactor map`: see [json-refactor](https://github.com/senntyou/json-refactor)
+- `refactor rules`: see [json-refactor](https://github.com/senntyou/json-refactor)
 
-### preHandle
+### `preHandle`
 
-More handling after `requestKeys`, before ajax sending.
+More handling after `requestKeys`, before `ajax` sending.
 
 ```
 preHandle: [
-    (reqData) => {... do something ...}, // env: 0
-    (reqData) => {... do something ...}, // env: 1
-    (reqData) => {... do something ...}, // env: 2
+    params => {... modify params, or return a new params ...}, // env: 0
+    params => {... modify params, or return a new params ...}, // env: 1
+    params => {... modify params, or return a new params ...}, // env: 2
 ]
 ```
 
-### postHandle
+### `postHandle`
 
 More handling after `responseRefactor`.
 
 ```
 postHandle: [
-    (res, reqData, name) => {... do something ...}, // env: 0
-    (res, reqData, name) => {... do something ...}, // env: 1
-    (res, reqData, name) => {... do something ...}, // env: 2
+    (result, params, name) => {... modify result, or return a new result }, // env: 0
+    (result, params, name) => {... modify result, or return a new result }, // env: 1
+    (result, params, name) => {... modify result, or return a new result }, // env: 2
 ]
 ```
 
-### implement
+### `implement`
 
-Custom request implementing instead of ajax.
+Custom request implementing instead of `ajax`.
 
-Sometimes, you have to not use ajax, instead using other ways. So, this is what you want.
+Sometimes, you have to not use `ajax`, but other ways, like html templates.
 
 ```
 implement: [
-    (cb, reqData) => { ... cb(result) }, // env: 0
-    (cb, reqData) => { ... cb(result) }, // env: 1
-    (cb, reqData) => { ... cb(result) }, // env: 2
+    (cb, params) => { ... cb(result) }, // env: 0
+    (cb, params) => { ... cb(result) }, // env: 1
+    (cb, params) => { ... cb(result) }, // env: 2
 ]
 ```
 
-* `note`: After get you own data, you should call `cb` callback(the first argument) with a result, like ajax response.
-
 ## api
 
-### config
+### `config`
 
-Config application.
+Configure application.
 
 ```
 // one
 seeAjax.config(name, options);
 
-// multi
+// multiple
 seeAjax.config({
     name1: options1,
     name2: options2,
@@ -189,7 +177,7 @@ seeAjax.config({
 });
 ```
 
-### setEnv
+### `setEnv`
 
 Set current environment.
 
@@ -197,94 +185,58 @@ Set current environment.
 seeAjax.setEnv(0/1/2/3);
 ```
 
-### getEnv
+### `getEnv`
 
 Get current environment.
 
 ```
-var env = seeAjax.getEnv(); // 0/1/2/3
+const env = seeAjax.getEnv(); // 0/1/2/3
 ```
 
-### seeAjax
+### `seeAjax`
 
 Make a request.
 
 ```
-seeAjax(name, reqData, successCallback, errorCallback)
+seeAjax(name, params, successCallback, errorCallback);
 ```
 
-* `name`: Defined request name.
-    - `note`: `common` is a special request name, for this will apply to all request.
-* `reqData`: Request data, refer to [https://api.jquery.com/jQuery.ajax/](https://api.jquery.com/jQuery.ajax/)
-* `successCallback`: Success callback, refer to [https://api.jquery.com/jQuery.ajax/](https://api.jquery.com/jQuery.ajax/)
-* `errorCallback`: Error callback, refer to [https://api.jquery.com/jQuery.ajax/](https://api.jquery.com/jQuery.ajax/)
+- `name`: Defined request name.
+  - `note`: `common` is a special request name, for this will apply to all request.
+- `params`: Request params.
+  - `type`: `map`
+  - `example`: `{a: 1, b: '2'}`
+- `successCallback`: Callback when ajax succeeded.
+  - `example`: `res => { ... }`
+- `errorCallback`: Callback when ajax occurred errors.
+  - `example`: `error => { ... }`
 
-### set
+### `set`
 
 Set custom config.
 
 ```
-set({
-    request: $.ajax,
+seeAjax.set({
     debug: !0
 });
 ```
 
-* `request`: Config your own request method, default is `jQuery.ajax`.
+- `debug`: Whether in debug mode, default is `true`.
 
-```
-settings => {...}
-```
-
-`settings`: Request [settings](https://api.jquery.com/jQuery.ajax/)
-
-* `debug`: Whether in debug mode, default is `true`.
-
-## handlers sequences while processing
+## Handlers sequences while processing.
 
 1. `method`: Check which http method to use, default is `GET`.
-2. `stringify`: Check whether to stringify request data.
+2. `stringify`: Check whether to stringify request params.
 3. `settings`: Check extra ajax settings.
 4. `url`: Get request url.
-5. `requestKeys`: Get real request data.
+5. `requestKeys`: Get real request params.
 6. `preHandle`: More handling before send a request.
-    1. `common`: Common handling, if have.
-    2. `name`: Named handling.
+   1. `common`: Common handling, if have.
+   2. `name`: Named handling.
 7. `implement`: If have, return a custom response data, and will not send an ajax.
 8. `responseRefactor`: Refactoring response data.
-    1. `common`: Common handling, if have.
-    2. `name`: Named handling.
+   1. `common`: Common handling, if have.
+   2. `name`: Named handling.
 9. `postHandle`: More handling after refactoring response data.
-    1. `common`: Common handling, if have.
-    2. `name`: Named handling.
-
-## without `jquery`
-
-By default, `see-ajax` is rely on `jquery`.
-
-However, you can also use your ajax engine to replace `jquery.ajax`, like [reqwest](https://github.com/ded/reqwest).
-
-If you do so, you should make it like this:
-
-```
-const seeAjax = require('see-ajax/dist/see-ajax.custom');
-const reqwest = require('reqwest');
-
-seeAjax.set({
-    request: reqwest
-});
-
-// or
-
-seeAjax.set({
-    request: settings => {
-        // do some with settings
-
-        reqwest(settings);
-    }
-});
-
-// ..., others is the same
-```
-
-## [demo code](./example)
+   1. `common`: Common handling, if have.
+   2. `name`: Named handling.
