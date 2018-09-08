@@ -34,7 +34,7 @@ export default function(name, params, successCallback, errorCallback) {
   // Stringify request params.
   const stringify = (options.stringify && options.stringify[index]) || !1;
 
-  // Fetch options.
+  // Ajax options.
   const settings = (options.settings && options.settings[index]) || {};
 
   // url
