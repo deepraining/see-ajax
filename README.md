@@ -1,6 +1,6 @@
-# see-fetch
+# see-ajax
 
-A `window.fetch` wrapper, with customizing request keys, refactoring response, pre handling, post handling, etc.
+An ajax wrapper, with customizing request keys, refactoring response, pre handling, post handling, etc.
 
 ## requirements
 
@@ -8,7 +8,7 @@ A `window.fetch` wrapper, with customizing request keys, refactoring response, p
 
 ## related
 
-- [see-ajax](https://github.com/senntyou/see-ajax)
+- [see-fetch](https://github.com/senntyou/see-fetch)
 
 ## note
 
@@ -17,13 +17,13 @@ A `window.fetch` wrapper, with customizing request keys, refactoring response, p
 ## Quick start.
 
 ```
-const seeFetch = require('see-fetch');
+const seeAjax = require('see-ajax');
 ```
 
 Configure application.
 
 ```
-seeFetch.config(name, {
+seeAjax.config(name, {
   method: [...],
   stringify: [...],
   settings: [...],
@@ -39,8 +39,7 @@ seeFetch.config(name, {
 Make a request.
 
 ```
-seeFetch(name, params)
-    .then(result => { ... });
+seeAjax(name, params, success, error);
 ```
 
 ## Config options.
@@ -74,7 +73,7 @@ stringify: [
 
 ### `settings`
 
-Extra fetch options.
+Extra ajax options.
 
 ```
 settings: [
@@ -109,7 +108,7 @@ requestKeys: [
 
 ### `responseRefactor`
 
-Refactor response json data, after `fetch` responding.
+Refactor response json data, after `ajax` responding.
 
 ```
 responseRefactor: [
@@ -123,7 +122,7 @@ responseRefactor: [
 
 ### `preHandle`
 
-More handling after `requestKeys`, before `fetch` sending.
+More handling after `requestKeys`, before `ajax` sending.
 
 ```
 preHandle: [
@@ -147,15 +146,15 @@ postHandle: [
 
 ### `implement`
 
-Custom request implementing instead of `fetch`.
+Custom request implementing instead of `ajax`.
 
-Sometimes, you have to not use `fetch`, but other ways, like html templates.
+Sometimes, you have to not use `ajax`, but other ways, like html templates.
 
 ```
 implement: [
-    (cb, params) => { ... cb(result), or return a Promise }, // env: 0
-    (cb, params) => { ... cb(result), or return a Promise }, // env: 1
-    (cb, params) => { ... cb(result), or return a Promise }, // env: 2
+    (cb, params) => { ... cb(result) }, // env: 0
+    (cb, params) => { ... cb(result) }, // env: 1
+    (cb, params) => { ... cb(result) }, // env: 2
 ]
 ```
 
@@ -167,10 +166,10 @@ Configure application.
 
 ```
 // one
-seeFetch.config(name, options);
+seeAjax.config(name, options);
 
 // multiple
-seeFetch.config({
+seeAjax.config({
     name1: options1,
     name2: options2,
     ...
@@ -182,7 +181,7 @@ seeFetch.config({
 Set current environment.
 
 ```
-seeFetch.setEnv(0/1/2/3);
+seeAjax.setEnv(0/1/2/3);
 ```
 
 ### `getEnv`
@@ -190,16 +189,15 @@ seeFetch.setEnv(0/1/2/3);
 Get current environment.
 
 ```
-const env = seeFetch.getEnv(); // 0/1/2/3
+const env = seeAjax.getEnv(); // 0/1/2/3
 ```
 
-### `seeFetch`
+### `seeAjax`
 
 Make a request.
 
 ```
-seeFetch(name, params)
-  .then(result => { ... });
+seeAjax(name, params, success, error);
 ```
 
 - `name`: Defined request name.
@@ -207,22 +205,20 @@ seeFetch(name, params)
 - `params`: Request params.
   - `type`: `map`
   - `example`: `{a: 1, b: '2'}`
-- `result`: Handled ultimate response json result. But if response status is `3XX, 4XX, 5XX`, `result` will be like: `{error: true, response: Response}`
-  - `error`: Mark response having errors, and you can customize it by `seeFetch.set({errorField: 'yourErrorField'});`
-  - `response`: Original [Response Object](https://developer.mozilla.org/zh-CN/docs/Web/API/Response)
+- `success`: Callback when ajax succeeded.
+  - `example`: `res => { ... }`
+- `error`: Callback when ajax occurred errors.
+  - `example`: `error => { ... }`
 
 ### `set`
 
 Set custom config.
 
 ```
-seeFetch.set({
-    errorField: 'error',
+seeAjax.set({
     debug: !0
 });
 ```
-
-- `errorField`: Config your own error field, default is `error`.
 
 - `debug`: Whether in debug mode, default is `true`.
 
@@ -230,13 +226,13 @@ seeFetch.set({
 
 1. `method`: Check which http method to use, default is `GET`.
 2. `stringify`: Check whether to stringify request params.
-3. `settings`: Check extra fetch settings.
+3. `settings`: Check extra ajax settings.
 4. `url`: Get request url.
 5. `requestKeys`: Get real request params.
 6. `preHandle`: More handling before send a request.
    1. `common`: Common handling, if have.
    2. `name`: Named handling.
-7. `implement`: If have, return a custom response data, and will not send a fetch.
+7. `implement`: If have, return a custom response data, and will not send an ajax.
 8. `responseRefactor`: Refactoring response data.
    1. `common`: Common handling, if have.
    2. `name`: Named handling.

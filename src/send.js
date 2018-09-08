@@ -1,10 +1,7 @@
+import request from 'reqwest';
 import setting from './setting';
 import share from './share';
 import { info, error } from './util/logger';
-import makeSearch from './util/make_search';
-import makeUrlSearchParams from './util/make_url_search_params';
-import fetchHandle from './fetch_handle';
-import postFetchHandle from './post_fetch_handle';
 import postHandle from './post_handle';
 
 /**
@@ -12,8 +9,10 @@ import postHandle from './post_handle';
  *
  * @param name Defined request name.
  * @param params Request params.
+ * @param successCallback Success callback.
+ * @param errorCallback Error callback.
  */
-export default function(name, params) {
+export default function(name, params, successCallback, errorCallback) {
   if (!name) return;
 
   // Current options.
@@ -82,49 +81,26 @@ export default function(name, params) {
 
   // Custom implement.
   if (implement) {
-    return new Promise(resolve => {
-      const callback = result => {
-        if (setting.debug) {
-          info(`custom fetch implement for '${name}', and request params is:`, realParams);
-          info(`result for '${name}' is:`, result);
-        }
+    implement(result => {
+      if (setting.debug) {
+        info(`custom ajax implement for '${name}', and request params is:`, realParams);
+        info(`result for '${name}' is:`, result);
+      }
 
-        resolve(postHandle(result, realParams, name));
-      };
-
-      // Use callback
-      const promise = implement(result => {
-        callback(result);
-      }, !stringify ? realParams : JSON.stringify(realParams));
-
-      // Return a Promise
-      if (promise && promise instanceof Promise)
-        promise.then(result => {
-          callback(result);
-        });
+      successCallback(postHandle(result, realParams, name));
     });
   } else {
+    settings.url = url;
     settings.method = method;
-    if (method === 'get' || method === 'GET') {
-      const newUrl = url + (url.indexOf('?') < 0 ? '?' : '&') + makeSearch(realParams);
-      return fetch(newUrl, settings)
-        .then(fetchHandle)
-        .then(postFetchHandle(name, realParams));
-    }
+    settings.data = stringify ? JSON.stringify(realParams) : realParams;
+    settings.type = 'json';
+    settings.success = result => {
+      if (successCallback) successCallback(postHandle(result, realParams, name));
+    };
+    settings.error = err => {
+      if (errorCallback) errorCallback(err);
+    };
 
-    settings.body = stringify ? JSON.stringify(realParams) : makeUrlSearchParams(realParams);
-
-    if (method !== 'get' && method !== 'GET' && method !== 'head' && method !== 'HEAD') {
-      if (!settings.headers) settings.headers = {};
-
-      if (!settings.headers['Content-Type'])
-        settings.headers['Content-Type'] = stringify
-          ? 'application/json'
-          : 'application/x-www-form-urlencoded;charset=UTF-8';
-    }
-
-    return fetch(url, settings)
-      .then(fetchHandle)
-      .then(postFetchHandle(name, realParams));
+    request(settings);
   }
 }
