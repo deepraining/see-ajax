@@ -1,17 +1,21 @@
 # Changelog
 
-## 0.3.0 [2018-07-24]
+## 0.2.0 [2018-09-06]
+
+- Use `microbundle` to build project.
+
+## 0.1.1 [2018-08-27]
+
+- `implement` can return `Promise`.
+
+## 0.1.0 [2018-07-24]
 
 - Remove `implementDelay` option.
 
-## 0.2.4
+## 0.0.2
 
-- Optimize `implement` realization.
+- Add `implementDelay` option.
 
-## 0.2.3
+## 0.0.1
 
-- Add `debug, implementDelay` options.
-
-## 0.2.2
-
-- Make custom `see-ajax` without `jquery`.
+- Init.

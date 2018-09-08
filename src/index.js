@@ -1,23 +1,12 @@
+import config from './config';
+import setEnv from './set_env';
+import getEnv from './get_env';
+import send from './send';
+import set from './set';
 
-'use strict';
+send.config = config;
+send.setEnv = setEnv;
+send.getEnv = getEnv;
+send.set = set;
 
-var $ = require('jquery');
-var config = require('./config');
-var setEnv = require('./set_env');
-var getEnv = require('./get_env');
-var send = require('./send');
-var set = require('./set');
-
-set({
-    request: $.ajax,
-    extend: $.extend
-});
-
-var seeAjax = send;
-
-seeAjax.config = config;
-seeAjax.setEnv = setEnv;
-seeAjax.getEnv = getEnv;
-seeAjax.set = set;
-
-module.exports = seeAjax;
+export default send;

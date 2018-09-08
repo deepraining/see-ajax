@@ -1,7 +1,9 @@
+
+#
+# common ignores
+#
 .DS_Store
 node_modules
 bower_components
 npm-debug.log
-package-lock.json
-yarn.lock
 .idea
