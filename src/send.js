@@ -88,12 +88,22 @@ export default function(name, params, successCallback, errorCallback) {
       }
 
       successCallback(postHandle(result, realParams, name));
-    });
+    }, realParams);
   } else {
     settings.url = url;
     settings.method = method;
     settings.data = stringify ? JSON.stringify(realParams) : realParams;
     settings.type = 'json';
+
+    if (method !== 'get' && method !== 'GET' && method !== 'head' && method !== 'HEAD') {
+      if (!settings.headers) settings.headers = {};
+
+      if (!settings.headers['Content-Type'])
+        settings.headers['Content-Type'] = stringify
+          ? 'application/json'
+          : 'application/x-www-form-urlencoded;charset=UTF-8';
+    }
+
     settings.success = result => {
       if (successCallback) successCallback(postHandle(result, realParams, name));
     };

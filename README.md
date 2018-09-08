@@ -5,6 +5,7 @@ An ajax wrapper, with customizing request keys, refactoring response, pre handli
 ## requirements
 
 - [json-refactor](https://github.com/senntyou/json-refactor)
+- [reqwest](https://github.com/ded/reqwest)
 
 ## related
 
@@ -39,7 +40,7 @@ seeAjax.config(name, {
 Make a request.
 
 ```
-seeAjax(name, params, success, error);
+seeAjax(name, params, successCallback, errorCallback);
 ```
 
 ## Config options.
@@ -73,7 +74,7 @@ stringify: [
 
 ### `settings`
 
-Extra ajax options.
+Extra ajax options. More to see [reqwest - options](https://github.com/ded/reqwest#options).
 
 ```
 settings: [
@@ -197,7 +198,7 @@ const env = seeAjax.getEnv(); // 0/1/2/3
 Make a request.
 
 ```
-seeAjax(name, params, success, error);
+seeAjax(name, params, successCallback, errorCallback);
 ```
 
 - `name`: Defined request name.
@@ -205,9 +206,9 @@ seeAjax(name, params, success, error);
 - `params`: Request params.
   - `type`: `map`
   - `example`: `{a: 1, b: '2'}`
-- `success`: Callback when ajax succeeded.
+- `successCallback`: Callback when ajax succeeded.
   - `example`: `res => { ... }`
-- `error`: Callback when ajax occurred errors.
+- `errorCallback`: Callback when ajax occurred errors.
   - `example`: `error => { ... }`
 
 ### `set`

@@ -1,4 +1,4 @@
-const prefix = 'see-fetch: ';
+const prefix = 'see-ajax: ';
 
 export const log = (str, ...rest) => {
   console.log(prefix + str, ...rest);

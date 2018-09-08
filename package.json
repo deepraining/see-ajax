@@ -58,10 +58,9 @@
     "koa-bodyparser": "^4.2.1",
     "lint-staged": "^7.2.0",
     "microbundle": "^0.6.0",
-    "node-fetch": "^2.2.0",
     "prettier": "^1.13.7",
     "rimraf": "^2.6.2",
-    "url-search-params": "^1.0.2"
+    "xhr2": "^0.1.4"
   },
   "lint-staged": {
     "**/*.js": [
