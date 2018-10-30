@@ -1,14 +1,15 @@
-# see-fetch
+# see-ajax
 
-A `window.fetch` wrapper, with response refactoring, pre handling, post handling, etc.
+An ajax wrapper, with response refactoring, pre handling, post handling, etc.
 
 ## requirements
 
 - [json-refactor](https://github.com/senntyou/json-refactor)
+- [reqwest](https://github.com/ded/reqwest)
 
 ## related
 
-- [see-ajax](https://github.com/senntyou/see-ajax)
+- [see-fetch](https://github.com/senntyou/see-fetch)
 
 ## note
 
@@ -17,14 +18,14 @@ Only for `json` response.
 ## quick start
 
 ```
-npm install see-fetch --save
+npm install see-ajax --save
 ```
 
 ```
-import seeFetch from 'see-fetch';
+import seeAjax from 'see-ajax';
 
 // configure application
-seeFetch.config(name, {
+seeAjax.config(name, {
   method,
   stringify,
   settings,
@@ -37,7 +38,7 @@ seeFetch.config(name, {
 });
 
 // make a request
-seeFetch(name, params).then(result => { ... });
+seeAjax(name, params, successCallback, errorCallback);
 ```
 
 ## config options
@@ -60,7 +61,7 @@ If `true`, the server will receive string, but not `key-value` pairs.
 
 If `GET` method, request params will not stringify at any time.
 
-### `settings`: extra fetch options
+### `settings`: extra [reqwest](https://github.com/ded/reqwest#options) options
 
 - `type`: `map`
 - `default`: `{}`
@@ -106,36 +107,36 @@ params => {... modify params, or return a new params ...}
 (result, params, name) => {... modify result, or return a new result }
 ```
 
-### `implement`: custom implementing instead of `fetch`
+### `implement`: custom implementing instead of `ajax`
 
 - `type`: `function`
 
 ```
-(cb, params) => { ... cb(result), or return a Promise }
+(cb, params) => { ... cb(result) }
 ```
 
-Sometimes, you have to not use `fetch`, but other ways, like html templates.
+Sometimes, you have to not use `ajax`, but other ways, like html templates.
 
 ## api
 
-### `seeFetch.config`: configure application
+### `seeAjax.config`: configure application
 
 ```
 // one
-seeFetch.config(name, options);
+seeAjax.config(name, options);
 
 // multiple
-seeFetch.config({
+seeAjax.config({
     name1: options1,
     name2: options2,
     ...
 });
 ```
 
-### `seeFetch.setEnv`: set current environment(index to get config options)
+### `seeAjax.setEnv`: set current environment(index to get config options)
 
 ```
-seeFetch.setEnv(0/1/2/3);
+seeAjax.setEnv(0/1/2/3);
 ```
 
 If you need multiple environments supports, you can configure all config options by array, and then set a env.
@@ -143,7 +144,7 @@ If you need multiple environments supports, you can configure all config options
 If you don't set an environment, 0 will be the default.
 
 ```
-seeFetch.config(name, {
+seeAjax.config(name, {
   method: [method1, method2, ...],
   stringify: [stringify1, stringify2, ...],
   settings: [settings1, settings2, ...],
@@ -155,20 +156,20 @@ seeFetch.config(name, {
   implement: [implement1, implement2, ...],
 });
 
-seeFetch.setEnv(0); // method1, stringify1, url1, ...
-seeFetch.setEnv(1); // method2, stringify2, url2, ...
+seeAjax.setEnv(0); // method1, stringify1, url1, ...
+seeAjax.setEnv(1); // method2, stringify2, url2, ...
 ```
 
-### `seeFetch.getEnv`: get current environment
+### `seeAjax.getEnv`: get current environment
 
 ```
-const env = seeFetch.getEnv(); // 0/1/2/3
+const env = seeAjax.getEnv(); // 0/1/2/3
 ```
 
-### `seeFetch`: make a request
+### `seeAjax`: make a request
 
 ```
-seeFetch(name, params).then(result => { ... });
+seeAjax(name, params, successCallback, errorCallback);
 ```
 
 - `name`: defined request name
@@ -176,33 +177,32 @@ seeFetch(name, params).then(result => { ... });
 - `params`: request params
   - `type`: `map`
   - `example`: `{a: 1, b: '2'}`
-- `result`: handled response data. But if response's status code is `3XX, 4XX, 5XX`, `result` will be like: `{error: true, response: Response}`
-  - `error`: mark response having an error, and you can customize it by `seeFetch.set({errorField: 'yourErrorField'})`
-  - `response`: original [Response Object](https://developer.mozilla.org/zh-CN/docs/Web/API/Response)
+- `successCallback`: callback when ajax success
+  - `example`: `res => { ... }`
+- `errorCallback`: callback when ajax occurs errors
+  - `example`: `error => { ... }`
 
-### `seeFetch.set`: set custom config
+### `seeAjax.set`: set custom config
 
 ```
-seeFetch.set({
-    errorField: 'error',
+seeAjax.set({
     debug: !0
 });
 ```
 
-- `errorField`: `string`, default `error`, configure your own error field
 - `debug`: `bool`, default `true`, whether in debug mode
 
 ## handlers sequences while processing
 
 1. `method`: check which http method to use, default is `GET`
 2. `stringify`: check whether to stringify request params
-3. `settings`: check extra fetch settings
+3. `settings`: check extra [reqwest](https://github.com/ded/reqwest#options) settings
 4. `url`: get request url
 5. `req`: get real request params
 6. `pre`: more handling before send a request
    1. `common`: common handling, if have
    2. `name`: named handling
-7. `implement`: if have, `see-fetch` will not send a `fetch`
+7. `implement`: if have, `see-ajax` will not send an `ajax`
 8. `refactor`: refactoring response data
    1. `common`: common handling, if have
    2. `name`: named handling

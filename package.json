@@ -5,7 +5,7 @@
   "module": "lib/m.js",
   "umd:main": "lib/umd.js",
   "amd:main": "lib/amd.js",
-  "description": "A ajax wrapper, with response refactoring, pre handling, post handling, etc.",
+  "description": "An ajax wrapper, with response refactoring, pre handling, post handling, etc.",
   "repository": {
     "type": "git",
     "url": "https://github.com/senntyou/see-ajax"

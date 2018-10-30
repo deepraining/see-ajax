@@ -1,5 +1,6 @@
 import refactor from 'json-refactor';
-import { getOption, makeSearch, makeUrlSearchParams } from './util';
+import request from 'reqwest';
+import { getOption } from './util';
 import { error, info } from './logger';
 
 let env = 0;
@@ -11,8 +12,6 @@ const setEnv = e => {
 const getEnv = () => env;
 
 const sets = {
-  // error field when response's status code is `3XX, 4XX, 5XX`
-  errorField: 'error',
   // whether current mode is debug
   debug: !0,
 };
@@ -40,19 +39,7 @@ const addConfig = (name, options) => {
   }
 };
 
-// const getConfig = name => configs[name];
-
-const afterFetch = res => {
-  // has error
-  if (res.status >= 300) return { [sets.errorField]: !0, response: res };
-
-  return res.json();
-};
-
 const postHandle = (name, params) => res => {
-  // has error
-  if (res[sets.errorField]) return res;
-
   // current config
   const nConfig = configs[name];
   // common config
@@ -96,7 +83,7 @@ const postHandle = (name, params) => res => {
   return response;
 };
 
-const send = (name, params) => {
+const send = (name, params, successCallback, errorCallback) => {
   if (!name) return;
 
   // current config
@@ -158,41 +145,24 @@ const send = (name, params) => {
   }
 
   if (implement) {
-    /* eslint-disable consistent-return */
-    return new Promise(resolve => {
-      const callback = result => {
-        if (sets.debug) {
-          info(`custom fetch implement for name[${name}]:`);
-          info(`request params is`, realParams);
-          info(`result is`, result);
-        }
+    implement(result => {
+      if (sets.debug) {
+        info(`custom ajax implement for name[${name}]:`);
+        info(`request params is`, realParams);
+        info(`result is`, result);
+      }
 
-        resolve(postHandle(name, realParams)(result));
-      };
+      if (successCallback)
+        successCallback(postHandle(name, realParams)(result));
+    }, realParams);
 
-      const promise = implement(result => {
-        callback(result);
-      }, !stringify ? realParams : JSON.stringify(realParams));
-
-      // return a Promise
-      if (promise && promise instanceof Promise)
-        promise.then(result => {
-          callback(result);
-        });
-    });
+    return;
   }
+
+  settings.url = url;
   settings.method = method;
-  if (method === 'get' || method === 'GET') {
-    const newUrl =
-      url + (url.indexOf('?') < 0 ? '?' : '&') + makeSearch(realParams);
-    return fetch(newUrl, settings)
-      .then(afterFetch)
-      .then(postHandle(name, realParams));
-  }
-
-  settings.body = stringify
-    ? JSON.stringify(realParams)
-    : makeUrlSearchParams(realParams);
+  settings.data = stringify ? JSON.stringify(realParams) : realParams;
+  settings.type = 'json';
 
   if (
     method !== 'get' &&
@@ -208,9 +178,14 @@ const send = (name, params) => {
         : 'application/x-www-form-urlencoded;charset=UTF-8';
   }
 
-  return fetch(url, settings)
-    .then(afterFetch)
-    .then(postHandle(name, realParams));
+  settings.success = result => {
+    if (successCallback) successCallback(postHandle(name, realParams)(result));
+  };
+  settings.error = err => {
+    if (errorCallback) errorCallback(err);
+  };
+
+  request(settings);
 };
 
 send.config = addConfig;
