@@ -1,4 +1,8 @@
-# Changelog
+# changelog
+
+## 1.0.0 [2018-10-30]
+
+- Use `rollup` to build project.
 
 ## 0.3.1 [2018-09-08]
 
