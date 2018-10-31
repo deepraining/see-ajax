@@ -1,7 +1,7 @@
 // This should be the first.
 require('./configs');
 
-const seeAjax = require('../dist/see-ajax');
+const seeAjax = require('../lib/cjs');
 const server = require('./server');
 
 seeAjax.set({ debug: !1 });
@@ -18,6 +18,39 @@ describe('all request tests', () => {
     expect(ret).toBeUndefined();
   });
 
+  test('request "request0"', done => {
+    seeAjax('request0', { key1: 1, key2: 2, key3: '3' }, res => {
+      const { request } = res;
+
+      expect(seeAjax.getEnv()).toBe(0);
+
+      expect(request.headers.header0).toBe('header0');
+      expect(request.method).toBe('POST');
+      expect(request.path).toBe('/url0');
+      expect(request.url).toBe('/url0');
+      expect(Object.keys(request.body).length).toBe(5);
+      expect(request.body.key11).toBe(1);
+      expect(request.body.key12).toBe(2);
+      expect(request.body.key3).toBe('3');
+      expect(request.body.common).toBe(0);
+      expect(request.body.request0).toBe(0);
+      expect(Object.keys(request.query).length).toBe(0);
+
+      expect(res.code).toBe(0);
+      expect(res.success).toBe(true);
+      expect(res.msg).toBe('success');
+      expect(res.message).toBe('success');
+      expect(res.common).toBe(0);
+      expect(res.request0).toBe(0);
+      expect(res.newData1.length).toBe(2);
+      expect(Object.keys(res.newData1[0]).length).toBe(4); // id, name, images, newImages1
+      expect(Object.keys(res.newData1[0].newImages1[0]).length).toBe(3); // id, url, newUrl1
+      expect(res.newData1[0].newImages1[0].newUrl1).toBe('url11');
+
+      done();
+    });
+  });
+
   test('request "request1" [env=0].', done => {
     seeAjax('request1', { key1: 1, key2: 2, key3: '3' }, res => {
       const { request } = res;
@@ -27,7 +60,9 @@ describe('all request tests', () => {
       expect(request.headers.header0).toBe('header0');
       expect(request.method).toBe('GET');
       expect(request.path).toBe('/url11');
-      expect(request.url).toBe('/url11?key3=3&key11=1&key12=2&common=0&request1=0');
+      expect(request.url).toBe(
+        '/url11?key3=3&key11=1&key12=2&common=0&request1=0'
+      );
       expect(Object.keys(request.query).length).toBe(5);
       expect(request.query.key11).toBe('1');
       expect(request.query.key12).toBe('2');

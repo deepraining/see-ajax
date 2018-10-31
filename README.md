@@ -1,6 +1,6 @@
 # see-ajax
 
-An ajax wrapper, with customizing request keys, refactoring response, pre handling, post handling, etc.
+An ajax wrapper, with response refactoring, pre handling, post handling, etc.
 
 ## requirements
 
@@ -13,157 +13,113 @@ An ajax wrapper, with customizing request keys, refactoring response, pre handli
 
 ## note
 
-- Only for `json` response.
+Only for `json` response.
 
-## Quick start.
-
-```
-const seeAjax = require('see-ajax');
-```
-
-Configure application.
+## quick start
 
 ```
+npm install see-ajax --save
+```
+
+```
+import seeAjax from 'see-ajax';
+
+// configure application
 seeAjax.config(name, {
-  method: [...],
-  stringify: [...],
-  settings: [...],
-  url: [...],
-  requestKeys: [...],
-  responseRefactor: [...],
-  preHandle: [...],
-  postHandle: [...],
-  implement: [...]
+  method,
+  stringify,
+  settings,
+  url,
+  req,
+  refactor,
+  pre,
+  post,
+  implement,
 });
-```
 
-Make a request.
-
-```
+// make a request
 seeAjax(name, params, successCallback, errorCallback);
 ```
 
-## Config options.
+## config options
 
-### `method`
+### `method`: which http method to use
 
-Decide which http method to use. Default is `GET`.
-
-```
-method: [
-    'delete', // env: 0, DELETE
-    'put', // env: 1, PUT
-    'post'// env: 2, POST
-    // other env, GET
-]
-```
-
-### `stringify`
-
-Decide Whether to stringify request params. If `true`, the server will receive string, but not `key-value` pairs. Default is `false`.
-
-- note: If `GET` method, request params will not stringify at any time.
+- `type`: `string`
+- `default`: `get`
 
 ```
-stringify: [
-    undefined, // env: 0, no
-    true // env: 1, yes
-    // other env, no
-]
+'post/put/delete'
 ```
 
-### `settings`
+### `stringify`: whether to stringify request params
 
-Extra ajax options. More to see [reqwest - options](https://github.com/ded/reqwest#options).
+- `type`: `bool`
+- `default`: `false`
 
-```
-settings: [
-    {...}, // env: 0
-    {...} // env: 1
-]
-```
+If `true`, the server will receive string, but not `key-value` pairs.
 
-### `url`
+If `GET` method, request params will not stringify at any time.
 
-Url to request.
+### `settings`: extra [reqwest](https://github.com/ded/reqwest#options) options
 
-```
-url: [
-    'url1', //env: 0
-    'url2', //env: 1
-    'url3' //env: 2
-]
-```
+- `type`: `map`
+- `default`: `{}`
 
-### `requestKeys`
+### `url`: url to request
 
-Request keys mapping.
+- `type`: `string`
+- `default`: empty string
+
+### `req/requestKeys`: keys mapping of request params
+
+- `type`: `map`
+- `default`: `{}`
 
 ```
-requestKeys: [
-    {sourceKey: 'newKey'}, // env: 0
-    {sourceKey: 'newKey'}, // env: 1
-    {sourceKey: 'newKey'}, // env: 2
-]
+{sourceKey: 'newKey'}
 ```
 
-### `responseRefactor`
+### `refactor/responseRefactor`: rules to refactor response using [json-refactor](https://github.com/senntyou/json-refactor)
 
-Refactor response json data, after `ajax` responding.
-
-```
-responseRefactor: [
-    {... refactor rules ...}, // env: 0
-    {... refactor rules ...}, // env: 1
-    {... refactor rules ...}, // env: 2
-]
-```
-
-- `refactor rules`: see [json-refactor](https://github.com/senntyou/json-refactor)
-
-### `preHandle`
-
-More handling after `requestKeys`, before `ajax` sending.
+- `type`: `map`
+- `default`: `{}`
 
 ```
-preHandle: [
-    params => {... modify params, or return a new params ...}, // env: 0
-    params => {... modify params, or return a new params ...}, // env: 1
-    params => {... modify params, or return a new params ...}, // env: 2
-]
+refactor: rules
 ```
 
-### `postHandle`
+- `rules`: see [json-refactor](https://github.com/senntyou/json-refactor)
 
-More handling after `responseRefactor`.
+### `pre/preHandle`: more handling to request params
+
+- `type`: `function`
 
 ```
-postHandle: [
-    (result, params, name) => {... modify result, or return a new result }, // env: 0
-    (result, params, name) => {... modify result, or return a new result }, // env: 1
-    (result, params, name) => {... modify result, or return a new result }, // env: 2
-]
+params => {... modify params, or return a new params ...}
 ```
 
-### `implement`
+### `post/postHandle`: more handling to response data
 
-Custom request implementing instead of `ajax`.
+- `type`: `function`
+
+```
+(result, params, name) => {... modify result, or return a new result }
+```
+
+### `implement`: custom implementing instead of `ajax`
+
+- `type`: `function`
+
+```
+(cb, params) => { ... cb(result) }
+```
 
 Sometimes, you have to not use `ajax`, but other ways, like html templates.
 
-```
-implement: [
-    (cb, params) => { ... cb(result) }, // env: 0
-    (cb, params) => { ... cb(result) }, // env: 1
-    (cb, params) => { ... cb(result) }, // env: 2
-]
-```
-
 ## api
 
-### `config`
-
-Configure application.
+### `seeAjax.config`: configure application
 
 ```
 // one
@@ -177,43 +133,56 @@ seeAjax.config({
 });
 ```
 
-### `setEnv`
-
-Set current environment.
+### `seeAjax.setEnv`: set current environment(index to get config options)
 
 ```
 seeAjax.setEnv(0/1/2/3);
 ```
 
-### `getEnv`
+If you need multiple environments supports, you can configure all config options by array, and then set a env.
 
-Get current environment.
+If you don't set an environment, 0 will be the default.
+
+```
+seeAjax.config(name, {
+  method: [method1, method2, ...],
+  stringify: [stringify1, stringify2, ...],
+  settings: [settings1, settings2, ...],
+  url: [url1, url2, ...],
+  req: [req1, req2, ...],
+  refactor: [refactor1, refactor2, ...],
+  pre: [pre1, pre2, ...],
+  post: [post1, post2, ...],
+  implement: [implement1, implement2, ...],
+});
+
+seeAjax.setEnv(0); // method1, stringify1, url1, ...
+seeAjax.setEnv(1); // method2, stringify2, url2, ...
+```
+
+### `seeAjax.getEnv`: get current environment
 
 ```
 const env = seeAjax.getEnv(); // 0/1/2/3
 ```
 
-### `seeAjax`
-
-Make a request.
+### `seeAjax`: make a request
 
 ```
 seeAjax(name, params, successCallback, errorCallback);
 ```
 
-- `name`: Defined request name.
-  - `note`: `common` is a special request name, for this will apply to all request.
-- `params`: Request params.
+- `name`: defined request name
+  - `note`: `common` is a special request name, and it will apply to all requests
+- `params`: request params
   - `type`: `map`
   - `example`: `{a: 1, b: '2'}`
-- `successCallback`: Callback when ajax succeeded.
+- `successCallback`: callback when ajax success
   - `example`: `res => { ... }`
-- `errorCallback`: Callback when ajax occurred errors.
+- `errorCallback`: callback when ajax occurs errors
   - `example`: `error => { ... }`
 
-### `set`
-
-Set custom config.
+### `seeAjax.set`: set custom config
 
 ```
 seeAjax.set({
@@ -221,22 +190,22 @@ seeAjax.set({
 });
 ```
 
-- `debug`: Whether in debug mode, default is `true`.
+- `debug`: `bool`, default `true`, whether in debug mode
 
-## Handlers sequences while processing.
+## handlers sequences while processing
 
-1. `method`: Check which http method to use, default is `GET`.
-2. `stringify`: Check whether to stringify request params.
-3. `settings`: Check extra ajax settings.
-4. `url`: Get request url.
-5. `requestKeys`: Get real request params.
-6. `preHandle`: More handling before send a request.
-   1. `common`: Common handling, if have.
-   2. `name`: Named handling.
-7. `implement`: If have, return a custom response data, and will not send an ajax.
-8. `responseRefactor`: Refactoring response data.
-   1. `common`: Common handling, if have.
-   2. `name`: Named handling.
-9. `postHandle`: More handling after refactoring response data.
-   1. `common`: Common handling, if have.
-   2. `name`: Named handling.
+1. `method`: check which http method to use, default is `GET`
+2. `stringify`: check whether to stringify request params
+3. `settings`: check extra [reqwest](https://github.com/ded/reqwest#options) settings
+4. `url`: get request url
+5. `req`: get real request params
+6. `pre`: more handling before send a request
+   1. `common`: common handling, if have
+   2. `name`: named handling
+7. `implement`: if have, `see-ajax` will not send an `ajax`
+8. `refactor`: refactoring response data
+   1. `common`: common handling, if have
+   2. `name`: named handling
+9. `post`: more handling after refactoring response data
+   1. `common`: common handling, if have
+   2. `name`: named handling
