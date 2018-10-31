@@ -13,7 +13,7 @@ export default [
   {
     file: 'lib/umd.js',
     format: 'umd',
-    name: 'JSONRefactor',
+    name: 'seeAjax',
   },
   {
     file: 'lib/amd.js',
