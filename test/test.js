@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 // This should be the first.
 require('./configs');
 
@@ -60,15 +61,16 @@ describe('all request tests', () => {
       expect(request.headers.header0).toBe('header0');
       expect(request.method).toBe('GET');
       expect(request.path).toBe('/url11');
-      expect(request.url).toBe(
+      expect(request.url).toContain(
         '/url11?key3=3&key11=1&key12=2&common=0&request1=0'
       );
-      expect(Object.keys(request.query).length).toBe(5);
+      expect(Object.keys(request.query).length).toBe(6);
       expect(request.query.key11).toBe('1');
       expect(request.query.key12).toBe('2');
       expect(request.query.key3).toBe('3');
       expect(request.query.common).toBe('0');
       expect(request.query.request1).toBe('0');
+      expect(request.query._).toBeDefined();
       expect(Object.keys(request.body).length).toBe(0);
 
       expect(res.code).toBe(0);
@@ -143,6 +145,7 @@ describe('all request tests', () => {
 
   test('request "request2" [env=0].', done => {
     seeAjax.setEnv(0);
+    seeAjax.set({ disableCacheField: '__' });
 
     seeAjax('request2', { key1: 1, key2: 2, key3: '3' }, res => {
       const { request } = res;
@@ -150,11 +153,12 @@ describe('all request tests', () => {
       expect(seeAjax.getEnv()).toBe(0);
 
       expect(request.method).toBe('GET');
-      expect(request.url).toBe('/url21?key1=1&key2=2&key3=3&common=0');
-      expect(Object.keys(request.query).length).toBe(4);
+      expect(request.url).toContain('/url21?key1=1&key2=2&key3=3&common=0');
+      expect(Object.keys(request.query).length).toBe(5);
       expect(request.query.key1).toBe('1');
       expect(request.query.key2).toBe('2');
       expect(request.query.key3).toBe('3');
+      expect(request.query.__).toBeDefined();
       expect(Object.keys(request.body).length).toBe(0);
 
       done();
@@ -163,6 +167,7 @@ describe('all request tests', () => {
 
   test('request "request2" [env=1].', done => {
     seeAjax.setEnv(1);
+    seeAjax.set({ disableCache: !1 });
 
     seeAjax('request2', { key1: 1, key2: 2, key3: '3' }, res => {
       const { request } = res;
@@ -175,6 +180,8 @@ describe('all request tests', () => {
       expect(request.query.key1).toBe('1');
       expect(request.query.key2).toBe('2');
       expect(request.query.key3).toBe('3');
+      expect(request.query._).toBeUndefined();
+      expect(request.query.__).toBeUndefined();
       expect(Object.keys(request.body).length).toBe(0);
 
       done();

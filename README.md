@@ -96,7 +96,7 @@ refactor: rules
 - `type`: `function`
 
 ```
-params => {... modify params, or return a new params ...}
+(params, name) => {... modify params, or return a new params ...}
 ```
 
 ### `post/postHandle`: more handling to response data
@@ -127,9 +127,9 @@ seeAjax.config(name, options);
 
 // multiple
 seeAjax.config({
-    name1: options1,
-    name2: options2,
-    ...
+  name1: options1,
+  name2: options2,
+  ...
 });
 ```
 
@@ -186,11 +186,15 @@ seeAjax(name, params, successCallback, errorCallback);
 
 ```
 seeAjax.set({
-    debug: !0
+  debug: !0,
+  disableCache: !0,
+  disableCacheField: '_',
 });
 ```
 
-- `debug`: `bool`, default `true`, whether in debug mode
+- `debug`: `type: bool` `default: true` whether in debug mode
+- `disableCache`: `type: bool` `default: true` disable request cache for `GET, HEAD` methods
+- `disableCacheField`: `type: string` `default: _` field name for appending timestamp to original url when `disableCache` is `true`
 
 ## handlers sequences while processing
 
