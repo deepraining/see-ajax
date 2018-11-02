@@ -14,6 +14,10 @@ const getEnv = () => env;
 const sets = {
   // whether current mode is debug
   debug: !0,
+  // disable request cache for `GET, HEAD` methods
+  disableCache: !0,
+  // field name for appending timestamp to original url when `disableCache` is `true`
+  disableCacheField: '_',
 };
 
 const setSettings = params => {
@@ -110,7 +114,7 @@ const send = (name, params, successCallback, errorCallback) => {
 
   const { pre: cPre, preHandle: cPreHandle } = cConfig;
 
-  const method = getOption(env, nMethod) || 'get';
+  const method = (getOption(env, nMethod) || 'get').toUpperCase();
   const stringify = getOption(env, nStringify) || !1;
   const settings = getOption(env, nSettings) || {};
   const url = getOption(env, nUrl) || '';
@@ -132,13 +136,13 @@ const send = (name, params, successCallback, errorCallback) => {
   });
 
   if (commonPre) {
-    const result = commonPre(realParams);
+    const result = commonPre(realParams, name);
 
     // if return a new object, use it
     if (result) realParams = result;
   }
   if (pre) {
-    const result = pre(realParams);
+    const result = pre(realParams, name);
 
     // if return a new object, use it
     if (result) realParams = result;
@@ -161,21 +165,24 @@ const send = (name, params, successCallback, errorCallback) => {
 
   settings.url = url;
   settings.method = method;
-  settings.data = stringify ? JSON.stringify(realParams) : realParams;
   settings.type = 'json';
 
-  if (
-    method !== 'get' &&
-    method !== 'GET' &&
-    method !== 'head' &&
-    method !== 'HEAD'
-  ) {
+  if (method !== 'GET' && method !== 'HEAD') {
+    settings.data = stringify ? JSON.stringify(realParams) : realParams;
+
     if (!settings.headers) settings.headers = {};
 
     if (!settings.headers['Content-Type'])
       settings.headers['Content-Type'] = stringify
         ? 'application/json'
         : 'application/x-www-form-urlencoded;charset=UTF-8';
+  } else {
+    const usedParams = { ...realParams };
+
+    if (sets.disableCache)
+      usedParams[sets.disableCacheField] = new Date().getTime();
+
+    settings.data = usedParams;
   }
 
   settings.success = result => {
