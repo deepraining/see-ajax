@@ -39,7 +39,7 @@ seeAjax.config(name, {
   implement,
 });
 
-// 开始一个请求
+// 发起一个请求
 seeAjax(name, params, successCallback, errorCallback);
 ```
 
@@ -117,7 +117,7 @@ refactor: rules
 (cb, params) => { ... cb(result) }
 ```
 
-有时不一定会通过 `ajax` 获取数据, 而是其他方式, html 模板引擎.
+有时不一定会通过 `ajax` 获取数据, 而是其他方式, 如 html 模板引擎.
 
 ## api
 
@@ -174,7 +174,7 @@ const env = seeAjax.getEnv(); // 0/1/2/3
 seeAjax(name, params, successCallback, errorCallback);
 ```
 
-- `name`: 定义请求名
+- `name`: 定义的请求名
   - `note`: `common` 是一个特殊的请求名, 会应用到所有的请求上
 - `params`: 请求参数
   - `type`: `map`
@@ -202,7 +202,7 @@ seeAjax.set({
 
 1. `method`: 检查使用哪个 http 方法, 默认是 `GET`
 2. `stringify`: 检查是否序列化请求参数
-3. `settings`: 检查 额外的 [reqwest](https://github.com/ded/reqwest#options) 配置
+3. `settings`: 检查额外的 [reqwest](https://github.com/ded/reqwest#options) 配置
 4. `url`: 获取请求 url
 5. `req`: 获取最终的请求参数对象
 6. `pre`: 发起请求之前对请求参数的前置操作
