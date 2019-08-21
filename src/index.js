@@ -87,7 +87,7 @@ const postHandle = (name, params) => res => {
   return response;
 };
 
-const send = (name, params, successCallback, errorCallback) => {
+const send = (name, params = {}, successCallback, errorCallback) => {
   if (!name) return;
 
   // current config
@@ -127,7 +127,7 @@ const send = (name, params, successCallback, errorCallback) => {
 
   Object.keys(realParams).forEach(key => {
     const newKey = req[key];
-    if (newKey && typeof newKey === 'string') {
+    if (newKey && typeof newKey === 'string' && newKey !== key) {
       // make a new key
       realParams[newKey] = realParams[key];
       // delete old key

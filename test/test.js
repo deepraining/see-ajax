@@ -102,7 +102,7 @@ describe('all request tests', () => {
       expect(request.url).toBe('/url12');
       expect(Object.keys(request.body).length).toBe(5);
       expect(request.body.key21).toBe('1');
-      expect(request.body.key22).toBe('2');
+      expect(request.body.key2).toBe('2');
       expect(request.body.key3).toBe('3');
       expect(request.body.common).toBe('1');
       expect(request.body.request1).toBe('1');

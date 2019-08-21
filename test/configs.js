@@ -53,7 +53,7 @@ const request1Config = {
   ],
   requestKeys: [
     { key1: 'key11', key2: 'key12' },
-    { key1: 'key21', key2: 'key22' },
+    { key1: 'key21', key2: 'key2' },
   ],
   responseRefactor: [
     {
