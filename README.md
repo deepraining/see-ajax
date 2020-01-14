@@ -40,7 +40,7 @@ seeAjax.config(name, {
 });
 
 // 发起一个请求
-seeAjax(name, params, successCallback);
+seeAjax(name, params, callback);
 ```
 
 ## 配置项
@@ -171,7 +171,7 @@ const env = seeAjax.getEnv(); // 0/1/2/3
 ### `seeAjax`: 发起一个请求
 
 ```
-seeAjax(name, params, successCallback);
+seeAjax(name, params, callback);
 ```
 
 - `name`: 定义的请求名
@@ -179,7 +179,7 @@ seeAjax(name, params, successCallback);
 - `params`: 请求参数
   - `type`: `map`
   - `example`: `{a: 1, b: '2'}`
-- `successCallback`: 成功的回调
+- `callback`: 完成的回调
   - `example`: `result => { ... }`
   - `result`: 响应数据. 但如果响应码是 `3XX, 4XX, 5XX`, 则 `result` 会如: `{error: true, response: Response}`
     - `error`: 标记响应出现错误, 当然你也可以通过 `seeAjax.set({errorField: 'yourErrorField'})` 自定义这个字段

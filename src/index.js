@@ -89,7 +89,7 @@ const postHandle = (name, params) => res => {
   return response;
 };
 
-const send = (name, params = {}, successCallback) => {
+const send = (name, params = {}, callback) => {
   if (!name) return;
 
   // current config
@@ -158,8 +158,7 @@ const send = (name, params = {}, successCallback) => {
         info(`result is`, result);
       }
 
-      if (successCallback)
-        successCallback(postHandle(name, realParams)(result));
+      if (callback) callback(postHandle(name, realParams)(result));
     }, realParams);
 
     return;
@@ -188,11 +187,11 @@ const send = (name, params = {}, successCallback) => {
   }
 
   settings.success = result => {
-    if (successCallback) successCallback(postHandle(name, realParams)(result));
+    if (callback) callback(postHandle(name, realParams)(result));
   };
   settings.error = err => {
     const result = { [sets.errorField]: !0, response: err };
-    if (successCallback) successCallback(postHandle(name, realParams)(result));
+    if (callback) callback(postHandle(name, realParams)(result));
   };
 
   request(settings);

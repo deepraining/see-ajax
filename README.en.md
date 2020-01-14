@@ -40,7 +40,7 @@ seeAjax.config(name, {
 });
 
 // make a request
-seeAjax(name, params, successCallback);
+seeAjax(name, params, callback);
 ```
 
 ## config options
@@ -171,7 +171,7 @@ const env = seeAjax.getEnv(); // 0/1/2/3
 ### `seeAjax`: make a request
 
 ```
-seeAjax(name, params, successCallback);
+seeAjax(name, params, callback);
 ```
 
 - `name`: defined request name
@@ -179,7 +179,7 @@ seeAjax(name, params, successCallback);
 - `params`: request params
   - `type`: `map`
   - `example`: `{a: 1, b: '2'}`
-- `successCallback`: callback when ajax success
+- `callback`: callback when ajax complete
   - `example`: `result => { ... }`
   - `result`: handled response data. But if response's status code is `3XX, 4XX, 5XX`, `result` will be like: `{error: true, response: Response}`
     - `error`: mark response having an error, and you can customize it by `seeAjax.set({errorField: 'yourErrorField'})`
