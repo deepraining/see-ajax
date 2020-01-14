@@ -40,7 +40,7 @@ seeAjax.config(name, {
 });
 
 // make a request
-seeAjax(name, params, successCallback, errorCallback);
+seeAjax(name, params, successCallback);
 ```
 
 ## config options
@@ -171,7 +171,7 @@ const env = seeAjax.getEnv(); // 0/1/2/3
 ### `seeAjax`: make a request
 
 ```
-seeAjax(name, params, successCallback, errorCallback);
+seeAjax(name, params, successCallback);
 ```
 
 - `name`: defined request name
@@ -180,20 +180,23 @@ seeAjax(name, params, successCallback, errorCallback);
   - `type`: `map`
   - `example`: `{a: 1, b: '2'}`
 - `successCallback`: callback when ajax success
-  - `example`: `res => { ... }`
-- `errorCallback`: callback when ajax occurs errors
-  - `example`: `error => { ... }`
+  - `example`: `result => { ... }`
+  - `result`: handled response data. But if response's status code is `3XX, 4XX, 5XX`, `result` will be like: `{error: true, response: Response}`
+    - `error`: mark response having an error, and you can customize it by `seeAjax.set({errorField: 'yourErrorField'})`
+    - `response`: original [XMLHttpRequest Object](https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest)
 
 ### `seeAjax.set`: set custom config
 
 ```
 seeAjax.set({
+  errorField: 'error',
   debug: !0,
   disableCache: !0,
   disableCacheField: '_',
 });
 ```
 
+- `errorField`: `type: string` `default: error` configure your own error field
 - `debug`: `type: bool` `default: true` whether in debug mode
 - `disableCache`: `type: bool` `default: true` disable request cache for `GET, HEAD` methods
 - `disableCacheField`: `type: string` `default: _` field name for appending timestamp to original url when `disableCache` is `true`

@@ -12,6 +12,8 @@ const setEnv = e => {
 const getEnv = () => env;
 
 const sets = {
+  // error field when response's status code is `3XX, 4XX, 5XX`
+  errorField: 'error',
   // whether current mode is debug
   debug: !0,
   // disable request cache for `GET, HEAD` methods
@@ -87,7 +89,7 @@ const postHandle = (name, params) => res => {
   return response;
 };
 
-const send = (name, params = {}, successCallback, errorCallback) => {
+const send = (name, params = {}, successCallback) => {
   if (!name) return;
 
   // current config
@@ -189,7 +191,8 @@ const send = (name, params = {}, successCallback, errorCallback) => {
     if (successCallback) successCallback(postHandle(name, realParams)(result));
   };
   settings.error = err => {
-    if (errorCallback) errorCallback(err);
+    const result = { [sets.errorField]: !0, response: err };
+    if (successCallback) successCallback(postHandle(name, realParams)(result));
   };
 
   request(settings);

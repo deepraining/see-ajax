@@ -191,18 +191,33 @@ describe('all request tests', () => {
   test('request "error" [env=0].', done => {
     seeAjax.setEnv(0);
 
-    seeAjax(
-      'error',
-      { key1: 1, key2: 2, key3: '3' },
-      () => {},
-      error => {
-        expect(seeAjax.getEnv()).toBe(0);
-        expect(error).toBeDefined();
-        expect(error.status).not.toBeLessThan(300);
+    seeAjax('error', { key1: 1, key2: 2, key3: '3' }, res => {
+      const { error, response } = res;
 
-        done();
-      }
-    );
+      expect(seeAjax.getEnv()).toBe(0);
+
+      expect(error).toBe(true);
+      expect(response).toBeDefined();
+
+      done();
+    });
+  });
+
+  test('request "error" [env=0] custom error filed.', done => {
+    seeAjax.setEnv(0);
+    seeAjax.set({ errorField: 'err', debug: !1 });
+
+    seeAjax('error', { key1: 1, key2: 2, key3: '3' }, res => {
+      const { err, error, response } = res;
+
+      expect(seeAjax.getEnv()).toBe(0);
+
+      expect(err).toBe(true);
+      expect(error).toBeUndefined();
+      expect(response).toBeDefined();
+
+      done();
+    });
   });
 
   test('request "implement" [env=0].', done => {

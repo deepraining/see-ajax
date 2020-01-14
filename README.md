@@ -40,7 +40,7 @@ seeAjax.config(name, {
 });
 
 // 发起一个请求
-seeAjax(name, params, successCallback, errorCallback);
+seeAjax(name, params, successCallback);
 ```
 
 ## 配置项
@@ -171,7 +171,7 @@ const env = seeAjax.getEnv(); // 0/1/2/3
 ### `seeAjax`: 发起一个请求
 
 ```
-seeAjax(name, params, successCallback, errorCallback);
+seeAjax(name, params, successCallback);
 ```
 
 - `name`: 定义的请求名
@@ -180,20 +180,23 @@ seeAjax(name, params, successCallback, errorCallback);
   - `type`: `map`
   - `example`: `{a: 1, b: '2'}`
 - `successCallback`: 成功的回调
-  - `example`: `res => { ... }`
-- `errorCallback`: 失败的回调
-  - `example`: `error => { ... }`
+  - `example`: `result => { ... }`
+  - `result`: 响应数据. 但如果响应码是 `3XX, 4XX, 5XX`, 则 `result` 会如: `{error: true, response: Response}`
+    - `error`: 标记响应出现错误, 当然你也可以通过 `seeAjax.set({errorField: 'yourErrorField'})` 自定义这个字段
+    - `response`: 原始 [XMLHttpRequest Object](https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest)
 
 ### `seeAjax.set`: 设置自定义配置
 
 ```
 seeAjax.set({
+  errorField: 'error',
   debug: !0,
   disableCache: !0,
   disableCacheField: '_',
 });
 ```
 
+- `errorField`: `type: string` `default: error` 配置你的自定义错误字段
 - `debug`: `type: bool` `default: true` 是否开启调试模式
 - `disableCache`: `type: bool` `default: true` 禁用 `GET, HEAD` 方法请求的缓存功能
 - `disableCacheField`: `type: string` `default: _` 当`disableCache` 为 `true` 时, 添加时间戳到原 url 上的字段名

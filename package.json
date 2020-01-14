@@ -1,6 +1,6 @@
 {
   "name": "see-ajax",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "main": "lib/cjs.js",
   "module": "lib/m.js",
   "umd:main": "lib/umd.js",
