@@ -2,6 +2,9 @@
 
 ## 2.0.0 [2020-01-14]
 
+- Remove `errorCallback` in request.
+- Add `errorField` in result.
+
 ## 1.0.2 [2019-08-21]
 
 - Fix bug of `req: {key: key}` causing `params: {key: undefined}`.
